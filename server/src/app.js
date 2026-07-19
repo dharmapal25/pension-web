@@ -10,12 +10,19 @@ app.use(express.json());
 
 
 
-app.get("/courses",(req,res)=> {
+app.get("/courses", (req, res) => {
 
-    res.send(dummyCourses)
+    res.json(dummyCourses)
+    // res.json({ message: "hello" })
 
 })
 
+
+app.get("/test",(req,res)=> {
+    res.json({
+        msg : "hello"
+    })
+})
 
 
 module.exports = app
