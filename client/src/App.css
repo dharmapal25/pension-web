@@ -1,0 +1,147 @@
+.courses-wrapper {
+  background-color: #0d0d0d;
+  border: 1px solid #4da6ff;
+  border-radius: 20px;
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 24px 32px;
+  color: #ffffff;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+/* Navbar */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  font-size: 15px;
+  color: #e0e0e0;
+}
+
+.nav-links span {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.nav-links span:hover {
+  color: #4da6ff;
+}
+
+.login-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+/* Filter + Search Row */
+.filter-search-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid #555;
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.filter-btn:hover {
+  border-color: #4da6ff;
+}
+
+.search-input {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #555;
+  border-radius: 8px;
+  padding: 10px 16px;
+  color: #ffffff;
+  font-size: 14px;
+  outline: none;
+}
+
+.search-input::placeholder {
+  color: #aaaaaa;
+}
+
+.search-input:focus {
+  border-color: #4da6ff;
+}
+
+/* Course Grid */
+.course-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 24px;
+}
+
+.course-card {
+  border: 1px solid #555;
+  border-radius: 14px;
+  overflow: hidden;
+  background-color: #111111;
+  transition: border-color 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.course-card:hover {
+  border-color: #4da6ff;
+  transform: translateY(-4px);
+}
+
+.course-thumbnail {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  display: block;
+}
+
+.course-info {
+  padding: 14px;
+}
+
+.course-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0 0 6px 0;
+}
+
+.course-instructor {
+  font-size: 13px;
+  color: #aaaaaa;
+  margin: 0 0 8px 0;
+}
+
+.course-price {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4da6ff;
+  margin: 0;
+}
+
+.status-text {
+  color: #aaaaaa;
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+}
