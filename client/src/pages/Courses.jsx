@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import API from '../services/api'
+
 import '../App.css'
 import CoursesCards from '../components/CoursesCards'
 import Navbar from '../components/Navbar'
@@ -14,7 +15,6 @@ const Courses = () => {
     useEffect(() => {
         axios.get(`http://localhost:3000/courses`)
             .then((res) => {
-                // console.log("response : ", res)
                 setCourses(res.data)
                 setLoading(false)
             })
@@ -22,14 +22,6 @@ const Courses = () => {
                 console.error('Error fetching courses:', err)
                 setLoading(false)
             })
-
-
-        axios.get("/test").then((res) => {
-            // console.log("response :>>> ", res)
-        }).catch((err) => {
-            console.error('Error fetching test:', err)
-        })
-
     }, [])
 
     const filteredCourses = courses.filter((course) =>
@@ -60,10 +52,8 @@ const Courses = () => {
                 ) : filteredCourses.length === 0 ? (
                     <p className="status-text">No courses found.</p>
                 ) : (
-                    filteredCourses.map((course, idx) => (
-
-                        <CoursesCards course={course} />
-
+                    filteredCourses.map((course) => (
+                        <CoursesCards key={course._id} course={course} />
                     ))
                 )}
             </div>

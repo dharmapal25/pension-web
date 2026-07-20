@@ -7,14 +7,16 @@ app.use(cors())
 app.use(express.json());
 
 
-
-
-
 app.get("/courses", (req, res) => {
 
     res.json(dummyCourses)
     // res.json({ message: "hello" })
 
+})
+
+
+app.get("/course",(req,res)=> {
+    
 })
 
 
