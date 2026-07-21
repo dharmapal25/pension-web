@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const { dummyCourses } = require("./models/courses.model");
@@ -7,7 +8,8 @@ const app = express();
 app.use(cors())
 app.use(express.json());
 
-app.use("/api/payments",Routes);
+app.use("/api/payment",Routes);
+
 
 app.get("/courses", (req, res) => {
 

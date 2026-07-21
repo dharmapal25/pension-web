@@ -1,3 +1,4 @@
+const razorpayInstance = require("../config/Rasorpay")
 
 const RazorPaymentOrder = async (req, res) => {
     try {
@@ -10,7 +11,7 @@ const RazorPaymentOrder = async (req, res) => {
             receipt: `receipt_${Date.now()}`,
         };
 
-        const order = await Razorpay.orders.create(options);
+        const order = await razorpayInstance.orders.create(options);
 
         res.json({
             success: true,
