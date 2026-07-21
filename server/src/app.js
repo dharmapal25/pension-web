@@ -1,16 +1,17 @@
 const express = require("express");
 const cors = require("cors");
 const { dummyCourses } = require("./models/courses.model");
+const Routes = require("./routers/payment.route");
 const app = express();
 
 app.use(cors())
 app.use(express.json());
 
+app.use("/api/payments",Routes);
 
 app.get("/courses", (req, res) => {
 
     res.json(dummyCourses)
-    // res.json({ message: "hello" })
 
 })
 

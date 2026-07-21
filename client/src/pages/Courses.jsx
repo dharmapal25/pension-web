@@ -4,7 +4,7 @@ import axios from 'axios'
 import API from '../services/api'
 
 import '../App.css'
-import CoursesCards from '../components/CoursesCards'
+import CoursesCards from '../components/courses/CoursesCards'
 import Navbar from '../components/Navbar'
 
 const Courses = () => {
@@ -52,8 +52,8 @@ const Courses = () => {
                 ) : filteredCourses.length === 0 ? (
                     <p className="status-text">No courses found.</p>
                 ) : (
-                    filteredCourses.map((course) => (
-                        <CoursesCards key={course._id} course={course} />
+                    filteredCourses.map((course,idx) => (
+                        <CoursesCards key={idx} course={course} />
                     ))
                 )}
             </div>
