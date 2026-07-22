@@ -1,26 +1,24 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { dummyCourses } = require("./models/courses.model");
+// const { dummyCourses } = require("./models/courses.model");
+
 const Routes = require("./routers/payment.route");
+const courseRoute = require("./controllers/course.controller");
+
+
 const app = express();
 
-app.use(cors())
 app.use(express.json());
+app.use(cookieStore());
+app.use(cors())
+
 
 app.use("/api/payment",Routes);
+app.use("/api/courses", courseRoute);
 
 
-app.get("/courses", (req, res) => {
 
-    res.json(dummyCourses)
-
-})
-
-
-app.get("/course",(req,res)=> {
-    
-})
 
 
 app.get("/test",(req,res)=> {

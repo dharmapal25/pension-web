@@ -1,86 +1,118 @@
-// const mongoose = require("mongoose");
+const Mongoose = require("mongoose");
 
-// const MONGO_URI = process.env.MONGO_URI;
+// lecture sub-document schema
 
-const dummyCourses = [
-  {
-    title: "Complete Web Development Bootcamp",
-    description: "HTML, CSS, JS, React aur Node.js seekho zero se hero tak.",
-    thumbnail: "https://picsum.photos/seed/webdev/400/250",
-    price: 499,
-    category: "Web Development",
-    instructor: { name: "Rahul Sharma", bio: "Full-stack developer, 6 yrs experience" },
-    sections: [
-      {
-        title: "Introduction",
-        lectures: [
-          { title: "Course Overview", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", duration: 5 },
-          { title: "Setting Up Environment", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", duration: 10 },
-        ],
-      },
-      {
-        title: "HTML Basics",
-        lectures: [
-          { title: "HTML Tags", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", duration: 15 },
-        ],
-      },
-    ],
-    reviews: [
-      { userId: "demoUser1", rating: 5, comment: "Bahut accha course hai!" },
-    ],
-  },
-  {
-    title: "DSA Masterclass",
-    description: "Data Structures aur Algorithms interview-ready banane ke liye.",
-    thumbnail: "https://picsum.photos/seed/dsa/400/250",
-    price: 0,
-    category: "Programming",
-    instructor: { name: "Priya Verma", bio: "Ex-Google SDE, DSA mentor" },
-    sections: [
-      {
-        title: "Arrays",
-        lectures: [
-          { title: "Array Basics", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", duration: 12 },
-          { title: "Two Pointer Technique", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", duration: 20 },
-        ],
-      },
-    ],
-    reviews: [],
-  },
-  {
-    title: "React + Node.js Full Stack Project",
-    description: "Ek real-world MERN project banao end to end.",
-    thumbnail: "https://picsum.photos/seed/mern/400/250",
-    price: 799,
-    category: "Web Development",
-    instructor: { name: "Aman Gupta", bio: "MERN stack instructor" },
-    sections: [
-      {
-        title: "Backend Setup",
-        lectures: [
-          { title: "Express Server Setup", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", duration: 18 },
-        ],
-      },
-    ],
-    reviews: [{ userId: "demoUser2", rating: 4, comment: "Good but pacing thodi fast hai." }],
-  },
-  {
-    title: "Python for Beginners",
-    description: "Python programming basics se advanced tak.",
-    thumbnail: "https://picsum.photos/seed/python/400/250",
-    price: 299,
-    category: "Programming",
-    instructor: { name: "Sneha Reddy", bio: "Python developer & educator" },
-    sections: [
-      {
-        title: "Getting Started",
-        lectures: [
-          { title: "Installing Python", videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ", duration: 8 },
-        ],
-      },
-    ],
-    reviews: [],
-  },
-];
+// properties 
+// title, videoUrl, duration, isPreview, resources
 
-module.exports = {dummyCourses}
+const lectureSchema = new Mongoose.Schema({
+
+  title: {
+    type: String,
+    required: [true, "Lecture title is required"]
+  },
+
+  videoUrl: {
+    type: String,
+    required: [true, "Video URL is required"]
+  },
+
+  duration: {
+    type: Number,
+    required: [true, "Duration is required"]
+  },
+
+  isPreview: {
+    type: Boolean,
+    default: false
+  }, // free preview lecture
+
+  resources: [{ type: String }], // PDF/notes links
+
+});
+
+
+// course schema
+// properties
+// title, subtitle, description, instructor, category, tags, level, language, thumbnail, price, discount, lectures, totalDuration, totalLectures, rating, whatYouWillLearn
+
+const courseSchema = new Mongoose.Schema({
+  title: {
+    type: String,
+    required: [true, "Course title is required"],
+    trim: true
+  },
+
+  subtitle: {
+    type: String,
+    required: [true, "Course subtitle is required"],
+    unique: true
+  }, // "Master Python by building 100 projects"
+
+  description: {
+    type: String,
+    required: [true, "Course description is required"]
+  },
+
+  instructor: {
+    type: Mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "Instructor is required"],
+  },
+
+  category: {
+    type: String,
+    enum: ["Web Development", "Data Science", "Programming", "Design", "Business", "Marketing", "App Development"],
+    required: [true, "Category is required"]
+  },
+
+  tags: [{ type: String }], // "Python", "Data Science", "Flask"
+
+  level: {
+    type: String,
+    enum: ["beginner", "intermediate", "advanced"],
+    default: "beginner",
+  },
+
+  language: {
+    type: String,
+    enum: ["English", "Hindi", "Spanish", "French", "German"],
+    default: "English"
+  },
+
+  thumbnail: {
+    type: String,
+    required: [true, "Thumbnail is required"]
+  },
+
+  price: {
+    type: Number,
+    default: 0
+  },
+
+  discount: {
+    type: Number,
+    default: 0
+  },
+
+  lectures: [lectureSchema], // embedded sub-documents
+
+  totalDuration: { type: Number, default: 0 }, // lectures of sum
+  totalLectures: { type: Number, default: 0 }, // count
+
+  rating: {
+    average: { type: Number, default: 0 },
+    count: { type: Number, default: 0 },
+  },
+
+  whatYouWillLearn: [{ type: String }], // bullet points
+},
+
+  { timestamps: true }
+);
+
+const Course = Mongoose.model("Course", courseSchema);
+module.exports = Course
+
+
+
