@@ -6,6 +6,9 @@ import Courses from './pages/Courses.jsx'
 import Home from './pages/Home.jsx'
 import Offers from './pages/Offers.jsx'
 import CourseInfo from './components/courses/CourseInfo.jsx'
+import Login from './components/auth/Login.jsx'
+import ProtectedRoute from './components/auth/ProtectedRoute.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
 
 
 const AllRoutes = createBrowserRouter([
@@ -21,8 +24,15 @@ const AllRoutes = createBrowserRouter([
   },
 
   {
-    path: "/courses/:courseTitle",
-    element: <CourseInfo />
+    path: "/login",
+    element: <Login />
+  },
+  {
+    element: <ProtectedRoute />,
+    children: [{
+      path: "/courses/:courseTitle",
+      element: <CourseInfo />
+    }],
   },
 
   {
@@ -35,7 +45,6 @@ const AllRoutes = createBrowserRouter([
 
 createRoot(document.getElementById('root')).render(
 
-  <RouterProvider router={AllRoutes} />
+  <AuthProvider><RouterProvider router={AllRoutes} /></AuthProvider>
 
 )
-

@@ -2,7 +2,6 @@ const Course = require("../models/courses.model");
 
 const createCourse = async (req, res) => {
     try {
-
         const course = await Course.create({
             ...req.body,
             instructor: req.user.id, // from verifyToken middleware
@@ -37,8 +36,19 @@ const getAllCourses = async (req, res) => {
     }
 };
 
+const getCourseById = async (req, res) => {
+    try {
+        const course = await Course.findById(req.params.id).populate("instructor");
+        if (!course) return res.status(404).json({ success: false, message: "Course not found" });
+        res.json({ success: true, course });
+    } catch (error) {
+        res.status(400).json({ success: false, message: "Invalid course id" });
+    }
+};
+
 
 module.exports = {
     createCourse,
-    getAllCourses
+    getAllCourses,
+    getCourseById
 }

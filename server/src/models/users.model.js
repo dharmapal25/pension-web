@@ -37,16 +37,16 @@ const userSchema = new mongoose.Schema(
 
     // Student-specific
     boughtCourses: [
-      { type: Mongoose.Schema.Types.ObjectId, ref: "Course" },
+      { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
     ],
 
     // Instructor-specific
     createdCourses: [
-      { type: Mongoose.Schema.Types.ObjectId, ref: "Course" },
+      { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
     ],
   },
   { timestamps: true }
 );
 
-const User = Mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;

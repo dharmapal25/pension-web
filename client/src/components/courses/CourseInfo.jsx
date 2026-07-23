@@ -1,5 +1,5 @@
 import React from 'react'
-import axios from 'axios'
+import API from '../../services/api'
 
 const CourseInfo = () => {
 
@@ -9,7 +9,7 @@ const CourseInfo = () => {
 
         try {
 
-            const { data } = await axios.post('http://localhost:3000/api/payment/order-verify', {
+            const { data } = await API.post('/api/payment/order-verify', {
                 amount
             })
 
@@ -26,7 +26,7 @@ const CourseInfo = () => {
                     const orderId = response.razorpay_order_id;
                     const signature = response.razorpay_signature;
 
-                    const { data } = await axios.post("http://localhost:3000/api/payment/payment-verify", {
+                    const { data } = await API.post("/api/payment/payment-verify", {
                         paymentId, orderId, signature
                     });
 

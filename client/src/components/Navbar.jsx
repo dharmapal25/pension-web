@@ -1,7 +1,10 @@
-import React from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 const Navbar = () => {
+    const { user, logout } = useAuth();
+    const navigate = useNavigate();
+    const handleLogout = async () => { await logout(); navigate('/'); };
     return (
         <div className="navbar">
             <div className="logo">CourseBox</div>
@@ -10,7 +13,7 @@ const Navbar = () => {
                 <Link to="/courses">Courses</Link>
                 <Link to="/offers">offers</Link>
             </div>
-            <button className="login-btn">login</button>
+            {user ? <button className="login-btn" onClick={handleLogout}>Logout ({user.name})</button> : <Link className="login-btn" to="/login">Login</Link>}
         </div>
     )
 }
