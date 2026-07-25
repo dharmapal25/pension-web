@@ -1,41 +1,32 @@
+import { onAuthStateChanged } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
-import { signInWithPopup, signOut } from "firebase/auth";
-import { auth, googleProvider } from "../config/firebase";
-import API from "../services/api";
+import { auth } from "../config/firebase";
 
-const AuthContext = createContext(null);
+const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+    {/* 2-step access */ }
+    const [user, setUser] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    API.get("/api/auth/me")
-      .then(({ data }) => setUser(data.user))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
-  }, []);
-  
+    useEffect(() => {
+        const onAuthState = onAuthStateChanged(auth, (cur) => {
+            setUser(cur)
+            setLoading(false)
+        })
+        return () => onAuthState()
+    }, [])
 
-  const loginWithGoogle = async () => {
-    const { user: firebaseUser } = await signInWithPopup(auth, googleProvider);
-    const { data } = await API.post("/api/auth/login", {
-      name: firebaseUser.displayName,
-      email: firebaseUser.email,
-      firebaseUid: firebaseUser.uid,
-      profileImage: firebaseUser.photoURL,
-    });
-    setUser(data.user);
-    return data.user;
-  };
+    console.log("first")
 
-  const logout = async () => {
-    setUser(null);
-    await API.post("/api/auth/logout");
-    await signOut(auth);
-  };
+    return (
+        <AuthContext.Provider value={{ user, loading }}>
+            {children} {/* 3-step consume */}
+        </AuthContext.Provider>
+    )
 
-  return <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout }}>{children}</AuthContext.Provider>;
 }
 
-export const useAuth = () => useContext(AuthContext);
+export function useAuth() {
+    return useContext(AuthContext);
+}

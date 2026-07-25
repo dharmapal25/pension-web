@@ -1,10 +1,21 @@
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
+import { signInWithPopup } from "firebase/auth"
+import { Link, useNavigate } from "react-router-dom"
+import { auth, googleProvider } from "../config/firebase"
 
 const Navbar = () => {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
-    const handleLogout = async () => { await logout(); navigate('/'); };
+
+    const navigate = useNavigate()
+
+    async function handleLoginWithGoogle() {
+        try {
+            await signInWithPopup(auth, googleProvider)
+            navigate("/")
+        }
+        catch (err) {
+            console.log("ERROR : ", err)
+        }
+    }
+
     return (
         <div className="navbar">
             <div className="logo">CourseBox</div>
@@ -12,8 +23,13 @@ const Navbar = () => {
                 <Link to="/">Home</Link>
                 <Link to="/courses">Courses</Link>
                 <Link to="/offers">offers</Link>
+                <button
+                    style={{ color: "#000", background: "#fff", borderRadius: "10px" }}
+                    onClick={handleLoginWithGoogle}>
+                    Login
+                </button>
             </div>
-            {user ? <button className="login-btn" onClick={handleLogout}>Logout ({user.name})</button> : <Link className="login-btn" to="/login">Login</Link>}
+
         </div>
     )
 }
