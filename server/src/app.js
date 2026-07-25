@@ -6,6 +6,7 @@ const cookieParser = require("cookie-parser");
 const Routes = require("./routers/payment.route");
 const courseRoute = require("./routers/course.route");
 const authRoute = require("./routers/users.route");
+const instructorRoute = require("./routers/instructor.route");
 
 
 const app = express();
@@ -19,9 +20,10 @@ app.use(cors({
 
 
 app.use("/api/payment",Routes);
+app.use("/api/instructor",instructorRoute);
+
 app.use("/api/courses", courseRoute);
 app.use("/api/auth",authRoute);
-
 
 
 
@@ -32,4 +34,4 @@ app.get("/test",(req,res)=> {
 })
 
 
-module.exports = app
+module.exports = app;
