@@ -11,9 +11,11 @@ const ProtectedRoute = ({ children }) => {
         )
     }
 
-    if(!user) {
+    if (!user) {
         return <Navigate to={"/"} replace />
     }
+
+    console.log("protected route children : ", children)
 
     return children
 

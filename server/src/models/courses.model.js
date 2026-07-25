@@ -2,7 +2,7 @@ const Mongoose = require("mongoose");
 
 // lecture sub-document schema
 
-// properties 
+// lecture properties 
 // title, videoUrl, duration, isPreview, resources
 
 const lectureSchema = new Mongoose.Schema({

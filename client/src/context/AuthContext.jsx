@@ -12,6 +12,7 @@ export function AuthProvider({ children }) {
     useEffect(() => {
         const onAuthState = onAuthStateChanged(auth, (cur) => {
             setUser(cur)
+            console.log("Cur user data : ", user);
             setLoading(false)
         })
         return () => onAuthState()

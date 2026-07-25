@@ -17,8 +17,8 @@ const AllRoutes = createBrowserRouter([
     path: "/",
     element:
       // <ProtectedRoute>
-        <Home />
-      // </ProtectedRoute>
+      <Home />
+    // </ProtectedRoute>
   },
 
   {
@@ -41,9 +41,8 @@ const AllRoutes = createBrowserRouter([
 
 ])
 
-
 createRoot(document.getElementById('root')).render(
-  <AuthProvider>
+  <AuthProvider> {/* 1-step parent */}
     <RouterProvider router={AllRoutes} />
   </AuthProvider>
 
