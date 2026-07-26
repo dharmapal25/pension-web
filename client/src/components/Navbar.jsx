@@ -2,7 +2,8 @@ import { signInWithPopup, signOut } from "firebase/auth"
 import { Link, useNavigate } from "react-router-dom"
 import { auth as firebaseAuth, googleProvider } from "../config/firebase"
 import { useAuth } from "../context/AuthContext"
-
+import axios from "axios";
+import API from "../services/api";
 const Navbar = () => {
 
     const navigate = useNavigate()
@@ -10,7 +11,17 @@ const Navbar = () => {
 
     async function handleLoginGoogle() {
         try {
-            await signInWithPopup(firebaseAuth, googleProvider)
+            let result = await signInWithPopup(firebaseAuth, googleProvider)
+
+            const idToken = await result.user.getIdToken();
+
+            // role base routes
+
+            // api/instructor/auth/google-login
+            await axios.post(`${API}/instructor/auth/google-login`, {
+                idToken
+            })
+
             navigate("/")
         }
         catch (err) {
@@ -21,8 +32,11 @@ const Navbar = () => {
     function handleLogoutGoogle() {
 
         signOut(firebaseAuth).then(() => {
+
+            await axios.post(`${API}/instructor/auth/google-logout`)
             console.log("User logged out successfully");
             navigate("/");
+
         }).catch((error) => {
             console.error("Logout error:", error);
         });
