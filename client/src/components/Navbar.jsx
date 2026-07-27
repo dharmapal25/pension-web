@@ -4,42 +4,17 @@ import { auth as firebaseAuth, googleProvider } from "../config/firebase"
 import { useAuth } from "../context/AuthContext"
 import axios from "axios";
 import API from "../services/api";
+import useAuthUser from "../hooks/useAuthRole";
 const Navbar = () => {
 
     const navigate = useNavigate()
     const { user, loading } = useAuth()
 
-    async function handleLoginGoogle() {
-        try {
-            let result = await signInWithPopup(firebaseAuth, googleProvider)
+    const { role } = useAuthUser();
 
-            const idToken = await result.user.getIdToken();
+    function profileView() {
 
-            // role base routes
-
-            // api/instructor/auth/google-login
-            await axios.post(`${API}/instructor/auth/google-login`, {
-                idToken
-            })
-
-            navigate("/")
-        }
-        catch (err) {
-            console.log("ERROR : ", err)
-        }
-    }
-
-   function handleLogoutGoogle() {
-
-        signOut(firebaseAuth).then(() => {
-
-            axios.post(`${API}/instructor/auth/google-logout`)
-            console.log("User logged out successfully");
-            navigate("/");
-
-        }).catch((error) => {
-            console.error("Logout error:", error);
-        });
+        navigate(`/${role}/profile`)
     }
 
     return (
@@ -54,14 +29,15 @@ const Navbar = () => {
 
                         <button
                             style={{ color: "#000", background: "#fff", borderRadius: "10px" }}
-                            onClick={handleLoginGoogle}>
+                            onClick={() => navigate("/login")}>
                             Login
                         </button>
                         :
                         <button
                             style={{ color: "#000", background: "#fff", borderRadius: "10px" }}
-                            onClick={handleLogoutGoogle}>
-                            Logout
+                            onClick={profileView}
+                        >
+                            Profile
                         </button>
 
                 }
