@@ -28,7 +28,7 @@ const InstructorLogin = () => {
             const idToken = await result.user.getIdToken();
 
             await axios.post(
-                `${API}/instructor/auth/google-login`,
+                `${API}/auth/instructor/google-login`,
                 {
                     idToken,
                     role: "instructor",
@@ -49,7 +49,7 @@ const InstructorLogin = () => {
         try {
             // Backend cookie remove
             await axios.post(
-                `${API}/instructor/auth/google-logout`,
+                `${API}/auth/instructor/google-logout`,
                 {},
                 {
                     withCredentials: true,
