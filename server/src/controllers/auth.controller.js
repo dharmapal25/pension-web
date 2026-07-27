@@ -7,7 +7,7 @@ const instructorLoginGoogle = async () => {
   try {
 
     // const { name, email, firebaseUid, profileImage, role, isInstructor, boughtCourses } = req.body
-    const { idToken } = req.body;
+    const { idToken,role } = req.body;
 
     if (!idToken) {
       return res.status(400).json({
@@ -27,7 +27,7 @@ const instructorLoginGoogle = async () => {
         name,
         firebaseUid: uid,
         avatar: picture,
-        role: "student",
+        role: "instructor",
       });
     }
 

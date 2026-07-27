@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../context/AuthContext'
 import CourseForm from '../components/courses/CourseForm';
+import Login from './Login';
 
 const Home = () => {
 
@@ -15,10 +16,14 @@ const Home = () => {
         user && (
           <>
             <h1>welcome, {user?.displayName} </h1>
-            <CourseForm />
+            {/* <CourseForm /> */}
+
           </>
         )
       }
+      <br />
+      <br />
+      <Login />
 
     </div>
   )

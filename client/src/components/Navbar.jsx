@@ -29,11 +29,11 @@ const Navbar = () => {
         }
     }
 
-    function handleLogoutGoogle() {
+   function handleLogoutGoogle() {
 
         signOut(firebaseAuth).then(() => {
 
-            await axios.post(`${API}/instructor/auth/google-logout`)
+            axios.post(`${API}/instructor/auth/google-logout`)
             console.log("User logged out successfully");
             navigate("/");
 
