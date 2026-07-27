@@ -2,8 +2,10 @@ import React from 'react'
 import { FaStar } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 
-const CoursesCards = ({ course, }) => {
+const CoursesCards = ({ course }) => {
   const originalPrice = course.originalPrice || Math.round(course.price * 1.7)
+
+
 
   return (
     <Link to={`/courses/${course.title.replace(/\s+/g, (match) => match === ' ' ? '-' : '').toLowerCase()}`} className="course-card-link">

@@ -1,6 +1,5 @@
 const imagekit = require('../config/imagekit');
 const Course = require('../models/courses.model');
-// const Course = require('../models/Course');
 
 const uploadCourse = async (req, res) => {
     // lecture properties: title, videoUrl, duration, isPreview, resources

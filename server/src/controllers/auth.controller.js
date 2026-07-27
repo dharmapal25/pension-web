@@ -70,7 +70,7 @@ const instructorLogoutGoogle = (req, res) => {
 
 }
 
-const instructorsAll = (req, res) => {
+const instructorsAll = async (req, res) => {
 
   const users = await User.find({ role: "instructor" });
 
