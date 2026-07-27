@@ -9,6 +9,7 @@ import Offers from './pages/Offers.jsx'
 import CourseInfo from './components/courses/CourseInfo.jsx'
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
+import Login from './pages/Login.jsx'
 
 
 const AllRoutes = createBrowserRouter([
@@ -21,6 +22,10 @@ const AllRoutes = createBrowserRouter([
     // </ProtectedRoute>
   },
 
+  {
+    path: "/login",
+    element: <Login />
+  },
   {
     path: "/courses",
     element: <Courses />

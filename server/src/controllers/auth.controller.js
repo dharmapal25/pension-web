@@ -7,7 +7,7 @@ const instructorLoginGoogle = async () => {
   try {
 
     // const { name, email, firebaseUid, profileImage, role, isInstructor, boughtCourses } = req.body
-    const { idToken,role } = req.body;
+    const { idToken, role } = req.body;
 
     if (!idToken) {
       return res.status(400).json({
@@ -41,11 +41,10 @@ const instructorLoginGoogle = async () => {
       { expiresIn: "7d" }
     );
 
-    res.cookie("token", token, {
+    res.json({ token }).cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
-
 
 
   } catch (err) {

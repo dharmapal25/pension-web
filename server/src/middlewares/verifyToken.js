@@ -4,7 +4,9 @@ export const verifyToken = (req, res, next) => {
   const token = req.cookies.token;
 
   if (!token) {
-    return res.status(401).json({ message: "Not authenticated" });
+    return res.status(401).json({
+       message: "Not authenticated" 
+      });
   }
 
   try {
@@ -13,6 +15,8 @@ export const verifyToken = (req, res, next) => {
     next();
     
   } catch (error) {
-    return res.status(401).json({ message: "Invalid or expired token" });
+    return res.status(401).json({ 
+      message: "Invalid or expired token" 
+    });
   }
 };
