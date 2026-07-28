@@ -1,11 +1,12 @@
 import React from 'react'
-import API from '../../services/api'
 import { useAuth } from '../../context/AuthContext';
+import API from '../../services/api'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useEffect } from 'react';
 
 const OpenCourse = () => {
+    const { user, loading } = useAuth();
 
     let navigate = useNavigate()
     const [course, setCourse] = useState({});
@@ -14,14 +15,17 @@ const OpenCourse = () => {
     const location = useLocation();
     console.log(location.state);
 
-    const { user, loading } = useAuth();
+
+    console.log(user);
+    console.log(user?.email);
+
+
 
     async function singleCourseInfo(id) {
         try {
             setLoad(true);
             let courseInfo = await API.get(`/online/course/${id}`)
             setCourse(courseInfo.data.course)
-            console.log(courseInfo.data.course, " >>>>  ", course);
 
         } catch (err) {
             setError(err.response?.data?.message || "Something went wrong");
@@ -73,8 +77,8 @@ const OpenCourse = () => {
 
                 // prefill details (/login details of the user)
                 prefill: {
-                    name: 'Flash',
-                    email: 'flash@example.com',
+                    name: user?.displayName,
+                    email: user?.email,
                     contact: '9999999999',
                 },
                 theme: { color: '#3399cc' },

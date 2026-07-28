@@ -3,7 +3,7 @@ const Course = require("../models/courses.model");
 // Get all published courses
 const getAllCourses = async (req, res) => {
     try {
-        const courses = await Course.find().limit(2);
+        const courses = await Course.find().limit(5);
 
         res.status(200).json({
             success: true,
@@ -21,7 +21,7 @@ const getAllCourses = async (req, res) => {
 const getCourseById = async (req, res) => {
     try {
         const course = await Course.findById(req.params.id)
-        
+
         if (!course) {
             return res.status(404).
                 json({
