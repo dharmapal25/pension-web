@@ -14,12 +14,7 @@ const Courses = () => {
     if (error) return <h2>{error}</h2>;
     return (
         <div className="courses-container">
-            {courses.map((course) => (
-                <CoursesCards
-                    key={course._id}
-                    course={course}
-                />
-            ))}
+                <CoursesCards/>
         </div>
     )
 }

@@ -4,10 +4,10 @@ const courseRoute = express.Router();
 
 
 // api/online/courses
-courseRoute.get("/online/courses", getAllCourses);
+courseRoute.get("/courses", getAllCourses);
 
 // api/online/courses/_id
-courseRoute.get("/online/courses/:id", getCourseById);
+courseRoute.get("/course/:id", getCourseById);
 
 
 // courseRoute.post("/", verifyToken, createCourse);

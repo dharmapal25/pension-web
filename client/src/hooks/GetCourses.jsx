@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import API from "../services/api";
 
 const useGetCourses = () => {
@@ -12,9 +11,10 @@ const useGetCourses = () => {
       try {
         setLoading(true);
 
-        const { data } = await axios.get(`${API}/online/courses`);
-
-        setCourses(data);
+        const { data } = await API.get("/online/courses");
+        console.log(data)
+        let CourseData = data.courses
+        setCourses(CourseData);
       } catch (err) {
         setError(err.response?.data?.message || "Something went wrong");
       } finally {

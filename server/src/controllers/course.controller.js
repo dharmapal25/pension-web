@@ -3,7 +3,7 @@ const Course = require("../models/courses.model");
 // Get all published courses
 const getAllCourses = async (req, res) => {
     try {
-        const courses = await Course.find();
+        const courses = await Course.find().limit(2);
 
         res.status(200).json({
             success: true,

@@ -1,10 +1,17 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Navbar from '../components/Navbar'
 import { useAuth } from '../context/AuthContext'
 import CourseForm from '../components/courses/CourseForm';
 import Login from './Login';
+import axios from 'axios';
 
 const Home = () => {
+
+  useEffect(() => {
+    axios.get("http://localhost:3000/test").then((res) => {
+      console.log(res)
+    })
+  }, [])
 
   const { user, loading } = useAuth();
   // console.log(user.displayName)
@@ -21,6 +28,9 @@ const Home = () => {
           </>
         )
       }
+
+
+
       <br />
       <br />
       <Login />

@@ -7,7 +7,8 @@ const Routes = require("./routers/payment.route");
 const courseRoute = require("./routers/course.route");
 const instructorRoute = require("./routers/instructor.route");
 const authRoute = require("./routers/auth.route");
-const verifyToken = require("./middlewares/verifyToken")
+const verifyToken = require("./middlewares/verifyToken");
+const Course = require("./models/courses.model");
 
 const app = express();
 
@@ -22,14 +23,18 @@ app.use(cors({
 app.use("/api/payment", Routes);
 app.use("/api/instructor", instructorRoute);
 
-app.use("/api/courses", courseRoute);
+app.use("/api/online", courseRoute);
 app.use("/api/auth", authRoute);
 
 
 
-app.get("/test", (req, res) => {
+app.get("/test", async (req, res) => {
+
+    let data = await Course.find()
+
     res.json({
-        msg: "hello"
+        msg: "hello",
+        data
     })
 })
 
