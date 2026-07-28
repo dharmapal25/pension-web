@@ -1,12 +1,12 @@
-const { initializeApp, cert } = require("firebase-admin/app");
+import admin from "firebase-admin";
+import { readFileSync } from "fs";
 
-const admin = initializeApp({
-  credential: cert({
-    project_id: process.env.FIREBASE_PROJECT_ID,
-    private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
-    client_email: process.env.FIREBASE_CLIENT_EMAIL
+const serviceAccount = JSON.parse(
+  readFileSync("./serviceAccountKey.json", "utf8")
+);
 
-  }),
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
 });
 
 module.exports = admin;
