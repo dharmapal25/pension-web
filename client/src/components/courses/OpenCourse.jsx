@@ -1,11 +1,20 @@
 import React from 'react'
 import API from '../../services/api'
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-const CourseInfo = () => {
+const OpenCourse = () => {
+
+    let navigate = useNavigate()
+    const { user, loading } = useAuth();
 
     let amount = 50;
 
     const handlePayment = async () => {
+
+        if (!user) {
+            return navigate("/login")
+        }
 
         try {
 
@@ -15,7 +24,7 @@ const CourseInfo = () => {
 
             const order = data.order;
             const options = {
-                key: "rzp_test_Rp4UfVRvSGNvh0",
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID,
                 amount: order.amount,
                 name: "Flash Razorpay payment test",
                 description: "Test Transaction",
@@ -114,4 +123,4 @@ const CourseInfo = () => {
     )
 }
 
-export default CourseInfo
+export default OpenCourse

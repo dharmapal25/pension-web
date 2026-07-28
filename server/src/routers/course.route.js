@@ -1,11 +1,15 @@
 const express = require("express");
+const { getAllCourses, getCourseById } = require("../controllers/course.controller");
 const courseRoute = express.Router();
 
 
-// const { getAllCourses, getCourseById, createCourse } = require("../controllers/course.controller");
+// api/online/courses
+courseRoute.get("/online/courses", getAllCourses);
 
-// courseRoute.get("/", getAllCourses);
-// courseRoute.get("/:id", getCourseById);
-// courseRoute.post("/", verifyToken, requireRole("instructor", "admin"), createCourse);
+// api/online/courses/_id
+courseRoute.get("/online/courses/:id", getCourseById);
+
+
+// courseRoute.post("/", verifyToken, createCourse);
 
 module.exports = courseRoute;

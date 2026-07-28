@@ -5,10 +5,9 @@ const cookieParser = require("cookie-parser");
 
 const Routes = require("./routers/payment.route");
 const courseRoute = require("./routers/course.route");
-const authRoute = require("./routers/users.route");
 const instructorRoute = require("./routers/instructor.route");
-const { verifyToken } = require("./middlewares/verifyToken");
-
+const authRoute = require("./routers/auth.route");
+const verifyToken = require("./middlewares/verifyToken")
 
 const app = express();
 

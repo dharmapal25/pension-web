@@ -6,7 +6,7 @@ import Courses from './pages/Courses.jsx'
 import Home from './pages/Home.jsx'
 import Offers from './pages/Offers.jsx'
 
-import CourseInfo from './components/courses/CourseInfo.jsx'
+import CourseInfo from './components/courses/OpenCourse.jsx'
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import Login from './pages/Login.jsx'
