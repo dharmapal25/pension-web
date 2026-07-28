@@ -6,12 +6,19 @@ const User = require("../models/users.model");
 const RazorPaymentOrder = async (req, res) => {
     try {
 
-        const { userId, courseId } = req.body
-
+        // const { userId, courseId } = req.body  
+        const { courseId } = req.body           // test
 
         const course = await Course.findById(courseId);
 
+        if (!course) {
+            return res.status(400).json({
+                message: "Invalid course id"
+            })
+        }
+
         // find amount and pass
+        let amount = course.price
 
         const options = {
             amount: amount * 100, //  in paisa (₹500 = 50000)
@@ -20,13 +27,16 @@ const RazorPaymentOrder = async (req, res) => {
         };
 
         const order = await razorpayInstance.orders.create(options);
+        console.log("order >>>>>  ", order)
+
 
         res.json({
             success: true,
+            course,
             order
         })
 
-    } catch (err) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: error.message

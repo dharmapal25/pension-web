@@ -2,6 +2,15 @@ body {
   background: #303030;
 }
 
+.courses-container {
+  display: flex;
+  margin: 10px;
+}
+
+.course-card-link {
+  margin: 10px;
+}
+
 .courses-wrapper {
   background-color: #0d0d0d;
   border: 1px solid #4da6ff;

@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import CourseForm from '../components/courses/CourseForm';
 import Login from './Login';
 import axios from 'axios';
-
+import "../App.css"
 const Home = () => {
 
   useEffect(() => {

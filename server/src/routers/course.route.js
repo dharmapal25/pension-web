@@ -6,7 +6,7 @@ const courseRoute = express.Router();
 // api/online/courses
 courseRoute.get("/courses", getAllCourses);
 
-// api/online/courses/_id
+// api/online/courses/:id
 courseRoute.get("/course/:id", getCourseById);
 
 

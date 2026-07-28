@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from 'axios'
 import API from '../services/api'
+import "../App.css"
 
 import CoursesCards from '../components/courses/CoursesCards'
 import Navbar from '../components/Navbar'
@@ -14,7 +15,7 @@ const Courses = () => {
     if (error) return <h2>{error}</h2>;
     return (
         <div className="courses-container">
-                <CoursesCards/>
+            <CoursesCards />
         </div>
     )
 }

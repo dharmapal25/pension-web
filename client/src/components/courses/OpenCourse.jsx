@@ -1,14 +1,39 @@
 import React from 'react'
 import API from '../../services/api'
 import { useAuth } from '../../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 const OpenCourse = () => {
 
     let navigate = useNavigate()
+    const [course, setCourse] = useState({});
+    let [load, setLoad] = useState(false);
+    let [error, setError] = useState("");
+    const location = useLocation();
+    console.log(location.state);
+
     const { user, loading } = useAuth();
 
-    let amount = 50;
+    async function singleCourseInfo(id) {
+        try {
+            setLoad(true);
+            let courseInfo = await API.get(`/online/course/${id}`)
+            setCourse(courseInfo.data.course)
+            console.log(courseInfo.data.course, " >>>>  ", course);
+
+        } catch (err) {
+            setError(err.response?.data?.message || "Something went wrong");
+        } finally {
+            setLoad(false);
+        }
+    }
+
+    useEffect(() => {
+        singleCourseInfo(location.state);
+    }, [])
+
 
     const handlePayment = async () => {
 
@@ -18,9 +43,11 @@ const OpenCourse = () => {
 
         try {
 
-            const { data } = await API.post('/api/payment/order-verify', {
-                amount
+            const { data } = await API.post('/payment/order-verify', {
+                courseId: location.state
             })
+
+            console.log("data : ", data)
 
             const order = data.order;
             const options = {
@@ -35,11 +62,13 @@ const OpenCourse = () => {
                     const orderId = response.razorpay_order_id;
                     const signature = response.razorpay_signature;
 
-                    const { data } = await API.post("/api/payment/payment-verify", {
-                        paymentId, orderId, signature
+                    const { data } = await API.post("/payment/payment-verify", {
+                        paymentId,
+                        orderId,
+                        signature,
+                        courseId: location.state
                     });
 
-                    alert(data.msg);
                 },
 
                 // prefill details (/login details of the user)
@@ -61,65 +90,76 @@ const OpenCourse = () => {
     }
 
     return (
-        <div className="course">
+        <>
 
-            {/* Left Side */}
-            <div className="left">
-                <p className="breadcrumb">Business &gt; Business Analytics &gt; SQL</p>
-                <h1 className="title"> The Complete SQL Bootcamp (30 Hours): Go from Zero to Hero </h1>
-                <p className="desc"> The only SQL course with animations, projects and practice to master SQL from beginner to advanced. </p>
+            {
 
-                <div className="creator">
-                    Created by <span>Flash Academy</span>
-                </div>
+                (load || loading) ?
 
-                <div className="info">
-                    <span>⭐ 4.7</span>
-                    <span>63,348 Students</span>
-                    <span>English</span>
-                </div>
+                    <h1>please wait, Loading...</h1>
 
-                <div className="learn-box">
-                    <h2>What you'll learn</h2>
+                    :
+                    < div className="course" >
+                        {/* <h1>Course {course._id} </h1> */}
+                        <div div div className="left" >
 
-                    <div className="grid">
+                            <button onClick={() => navigate(-1)}>BACK</button>
 
-                        <div>✔ Learn SQL Basics</div>
-                        <div>✔ SELECT Queries</div>
+                            <h1 className="title">{course?.title}</h1>
 
-                        <div>✔ WHERE Clause</div>
-                        <div>✔ GROUP BY</div>
+                            <p className="desc">{course?.description}</p>
 
-                        <div>✔ JOINS</div>
-                        <div>✔ Aggregate Functions</div>
+                            <div className="creator">
+                                Created by <span>{course?.instructor?.name}</span>
+                            </div>
 
-                        <div>✔ Window Functions</div>
-                        <div>✔ Real Projects</div>
+                            <div className="info">
+                                <span>⭐ {course?.rating?.average}</span>
+                                <span>{course?.rating?.count} Reviews</span>
+                                <span>{course?.language}</span>
+                            </div>
 
-                    </div>
+                            <div className="learn-box">
+                                <h2>What you'll learn</h2>
 
-                </div>
+                                <div className="grid">
+                                    {course?.whatYouWillLearn?.map((item, index) => (
+                                        <div key={index}>✔ {item}</div>
+                                    ))}
+                                </div>
+                            </div>
 
-            </div>
+                        </div >
 
-            {/* Right Side */}
+                        <div className="right">
 
-            <div className="right">
-                <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800" alt="" />
+                            <img
+                                src={course?.thumbnail}
+                                alt={course?.title}
+                            />
 
-                <h2>₹469</h2>
-                <button onClick={handlePayment}>Buy Now</button>
-                <button className="outline">Add to Cart</button>
+                            <h2>₹{course?.price}</h2>
 
-                <ul>
-                    <li>✔ Lifetime Access</li>
-                    <li>✔ Certificate</li>
-                    <li>✔ Downloadable Resources</li>
-                    <li>✔ Full HD Videos</li>
-                </ul>
+                            <button onClick={handlePayment}>
+                                Buy Now
+                            </button>
 
-            </div>
-        </div>
+                            <button className="outline">
+                                Add to Cart
+                            </button>
+
+                            <ul>
+                                <li>✔ Lifetime Access</li>
+                                <li>✔ {course?.totalLectures} Lectures</li>
+                                <li>✔ {course?.totalDuration} Hours</li>
+                                <li>✔ {course?.level}</li>
+                            </ul>
+
+                        </div>
+
+                    </div >
+            }
+        </>
     )
 }
 
