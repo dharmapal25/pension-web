@@ -13,6 +13,8 @@ const useAuthUser = () => {
         withCredentials: true,
       });
 
+      console.log("user : ", data)
+
       setUser(data);
       return data;
     } catch (err) {
@@ -23,6 +25,7 @@ const useAuthUser = () => {
     }
   };
 
+  console.log(user)
   return {
     user,
     loading,

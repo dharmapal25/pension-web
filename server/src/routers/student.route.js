@@ -4,10 +4,13 @@ const studentRoute = express.Router();
 
 
 // api/student/profile
-studentRoute.post("/student/profile", studentProfile);
+studentRoute.post("/profile", studentProfile);
 
 
-// student payment process
+// student Id
 
-// api/student/courses/:id
-studentRoute.post()
+// api/student/:id
+// studentRoute.post()
+
+
+module.exports = studentRoute

@@ -9,6 +9,7 @@ const instructorRoute = require("./routers/instructor.route");
 const verifyToken = require("./middlewares/verifyToken");
 const Course = require("./models/courses.model");
 const authRoute = require("./routers/auth.route");
+const studentRoute = require("./routers/student.route");
 
 const app = express();
 
@@ -27,6 +28,8 @@ app.use("/api/online", courseRoute);
 
 // api/auth/instructor/google-login
 app.use("/api/auth", authRoute);
+
+app.use("/api/student/",studentRoute)
 
 
 app.get("/test", async (req, res) => {

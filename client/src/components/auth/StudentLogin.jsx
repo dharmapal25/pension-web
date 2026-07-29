@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, signOut } from "firebase/auth";
@@ -11,36 +10,33 @@ import { auth as firebaseAuth, googleProvider } from "../../config/firebase";
 const StudentLogin = () => {
     const navigate = useNavigate();
 
-    const { _id, role, loading, refetch } = useAuthUser();
-
-    // Login redirect
-    useEffect(() => {
-        if (!loading && role === "student" && _id) {
-            navigate(`/student/${_id}`);
-        }
-    }, [loading, role, _id, navigate]);
+    let [loading, setLoading] = useState(false);
 
     // Google Login
     const handleStudentLogin = async () => {
         try {
+            setLoading(true);
             const result = await signInWithPopup(firebaseAuth, googleProvider);
-
             const idToken = await result.user.getIdToken();
 
-            await axios.post(
-                `${API}/auth/student/google-login`,
-                {
-                    idToken,
-                    role: "student",
-                },
+            const { data } = await API.post(
+                "/auth/student/google-login",
+                { idToken },
                 {
                     withCredentials: true,
                 }
             );
 
-            await refetch();
+            console.log(data);
+
+            navigate(`/student/profile/${data.user.id}`, {
+                state: data.user,
+            });
+
         } catch (err) {
             console.log("Login Error:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -48,8 +44,8 @@ const StudentLogin = () => {
     const handleStudentLogout = async () => {
         try {
             // Backend cookie remove
-            await axios.post(
-                `${API}/auth/student/google-logout`,
+            // api/auth/student/google-login
+            await API.post("/auth/student/google-logout",
                 {},
                 {
                     withCredentials: true,
@@ -78,24 +74,19 @@ const StudentLogin = () => {
                     <p>Access your courses, assignments, and learning path.</p>
                 </div>
 
-                {role === "student" ? (
-                    <button className="google-btn" onClick={handleStudentLogout}>
-                        Logout
-                    </button>
-                ) : (
-                    <button
-                        className="google-btn"
-                        onClick={handleStudentLogin}
-                        disabled={loading}
-                    >
-                        <FcGoogle />
-                        <span>
-                            {loading
-                                ? "Loading..."
-                                : "Login as student with Google"}
-                        </span>
-                    </button>
-                )}
+                <button
+                    className="google-btn"
+                    onClick={handleStudentLogin}
+                    disabled={loading}
+                >
+                    <FcGoogle />
+                    <span>
+                        {loading
+                            ? "Loading..."
+                            : "Login as student with Google"}
+                    </span>
+                </button>
+
             </div>
         </div>
     );

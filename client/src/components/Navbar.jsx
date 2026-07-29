@@ -5,16 +5,25 @@ import { useAuth } from "../context/AuthContext"
 import axios from "axios";
 import API from "../services/api";
 import useAuthUser from "../hooks/useAuthRole";
+import { useEffect } from "react";
 const Navbar = () => {
 
     const navigate = useNavigate()
     const { user, loading } = useAuth()
 
-    const { role } = useAuthUser();
+        const token = useAuthUser();
+
+        console.log(token)
+
+        useEffect(()=> {
+            token.fetchUser()
+        },[])
+
 
     function profileView() {
 
-        navigate(`/${role}/profile`)
+        navigate(`/${token.user.role}/profile/${token.user.id}`)
+        // navigate(`/instructor/profile/${data.user.id}`)
     }
 
     return (

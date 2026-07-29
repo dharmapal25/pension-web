@@ -111,57 +111,85 @@ const instructorsAll = async (req, res) => {
 
 // Student auth
 
-const studentLoginGoogle = async () => {
+const studentLoginGoogle = async (req, res) => {
 
   try {
-
-    // const { name, email, firebaseUid, profileImage, role, isInstructor, boughtCourses } = req.body
-    const { idToken, role } = req.body;
+    const { idToken } = req.body;
 
     if (!idToken) {
       return res.status(400).json({
-        message: "Firebase token are required"
+        success: false,
+        message: "Firebase idToken is required",
       });
     }
 
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { uid, email, name, picture } = decodedToken;
+    // Verify Firebase Token
+    const decodedToken = await auth.verifyIdToken(idToken);
 
+    const {
+      uid,
+      email,
+      name,
+      picture,
+    } = decodedToken;
 
-    const user = await User.findOne({ email });
+    let user = await User.findOne({ firebaseUid: uid });
 
     if (!user) {
       user = await User.create({
-        email,
         name,
+        email,
         firebaseUid: uid,
-        avatar: picture,
+        profileImage: picture,
         role: "student",
+        isInstructor: true,
       });
+    } else {
+      // Update existing user if needed
+      user.name = name || user.name;
+      user.profileImage = picture || user.profileImage;
+      user.role = "student";
+      user.isInstructor = true;
+
+      await user.save();
     }
 
-    const token = jwt.sign({
-      id: user._id,
-      email: user.email,
-      role: user.role
-    },
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
       process.env.JWT_SECRET,
-
-      { expiresIn: "7d" }
+      {
+        expiresIn: "7d",
+      }
     );
 
-    res.json({ token }).cookie("token", token, {
+    res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    return res.status(200).json({
+      success: true,
+      message: "student login successful",
+      user: {
+        id: user._id,
+        user
+      },
+    });
 
   } catch (err) {
-    res.status(500).json({
-      message: "Error occurred while logging in user",
-      error: err.message
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Error occurred while logging in student",
+      error: err.message,
     });
   }
+
 }
 
 const studentLogoutGoogle = (req, res) => {

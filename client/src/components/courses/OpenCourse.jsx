@@ -73,6 +73,9 @@ const OpenCourse = () => {
                         courseId: location.state
                     });
 
+                    console.log("payment info : ",data);
+                    navigate("/")
+
                 },
 
                 // prefill details (/login details of the user)
@@ -86,6 +89,8 @@ const OpenCourse = () => {
 
             const rzp = new Razorpay(options);
             rzp.open();
+
+
         }
 
         catch (error) {
