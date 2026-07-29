@@ -16,11 +16,9 @@ import Instructor from './pages/Profile.jsx'
 const AllRoutes = createBrowserRouter([
 
   {
-    path: "/",
+    path: "/home",
     element:
-      // <ProtectedRoute>
       <Home />
-    // </ProtectedRoute>
   },
 
   {

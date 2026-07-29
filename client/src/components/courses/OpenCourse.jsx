@@ -2,23 +2,34 @@ import React from 'react'
 import { useAuth } from '../../context/AuthContext';
 import API from '../../services/api'
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import useAuthUser from '../../hooks/useAuthRole';
 
 const OpenCourse = () => {
     const { user, loading } = useAuth();
 
     let navigate = useNavigate()
+
     const [course, setCourse] = useState({});
+    const [id, setId] = useState(null);
     let [load, setLoad] = useState(false);
     let [error, setError] = useState("");
+
     const location = useLocation();
     console.log(location.state);
 
+    useEffect(() => {
+        API.get("/auth/me", {
+            withCredentials: true,
+        }).then((data) => {
+            setId(data.data.id)
+            console.log("data : ", data.data.id)
+        }).catch((err) => {
+            console.log("error : ", err)
 
-    console.log(user);
-    console.log(user?.email);
+        })
 
+    }, [])
 
 
     async function singleCourseInfo(id) {
@@ -38,7 +49,6 @@ const OpenCourse = () => {
         singleCourseInfo(location.state);
     }, [])
 
-
     const handlePayment = async () => {
 
         if (!user) {
@@ -51,7 +61,6 @@ const OpenCourse = () => {
                 courseId: location.state
             })
 
-            console.log("data : ", data)
 
             const order = data.order;
             const options = {
@@ -62,19 +71,19 @@ const OpenCourse = () => {
                 order_id: order.id,
 
                 handler: async function (response) {
-                    const paymentId = response.razorpay_payment_id;
-                    const orderId = response.razorpay_order_id;
-                    const signature = response.razorpay_signature;
+                    const razorpay_payment_id = response.razorpay_payment_id;
+                    const razorpay_order_id = response.razorpay_order_id;
+                    const razorpay_signature = response.razorpay_signature;
 
                     const { data } = await API.post("/payment/payment-verify", {
-                        paymentId,
-                        orderId,
-                        signature,
-                        courseId: location.state
+                        razorpay_payment_id,
+                        razorpay_order_id,
+                        razorpay_signature,
+                        courseId: location.state,
+                        userId: id
                     });
 
-                    console.log("payment info : ",data);
-                    navigate("/")
+                    // navigate("/")
 
                 },
 
@@ -89,7 +98,6 @@ const OpenCourse = () => {
 
             const rzp = new Razorpay(options);
             rzp.open();
-
 
         }
 
@@ -122,22 +130,6 @@ const OpenCourse = () => {
                                 Created by <span>{course?.instructor?.name}</span>
                             </div>
 
-                            <div className="info">
-                                <span>⭐ {course?.rating?.average}</span>
-                                <span>{course?.rating?.count} Reviews</span>
-                                <span>{course?.language}</span>
-                            </div>
-
-                            <div className="learn-box">
-                                <h2>What you'll learn</h2>
-
-                                <div className="grid">
-                                    {course?.whatYouWillLearn?.map((item, index) => (
-                                        <div key={index}>✔ {item}</div>
-                                    ))}
-                                </div>
-                            </div>
-
                         </div >
 
                         <div className="right">
@@ -153,16 +145,6 @@ const OpenCourse = () => {
                                 Buy Now
                             </button>
 
-                            <button className="outline">
-                                Add to Cart
-                            </button>
-
-                            <ul>
-                                <li>✔ Lifetime Access</li>
-                                <li>✔ {course?.totalLectures} Lectures</li>
-                                <li>✔ {course?.totalDuration} Hours</li>
-                                <li>✔ {course?.level}</li>
-                            </ul>
 
                         </div>
 

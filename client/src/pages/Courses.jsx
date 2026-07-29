@@ -14,9 +14,12 @@ const Courses = () => {
     if (loading) return <h2>Loading...</h2>;
     if (error) return <h2>{error}</h2>;
     return (
-        <div className="courses-container">
-            <CoursesCards />
-        </div>
+        <>
+        <Navbar />
+            <div className="courses-container">
+                <CoursesCards />
+            </div>
+        </>
     )
 }
 

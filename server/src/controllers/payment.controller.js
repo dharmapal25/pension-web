@@ -27,8 +27,6 @@ const RazorPaymentOrder = async (req, res) => {
         };
 
         const order = await razorpayInstance.orders.create(options);
-        console.log("order >>>>>  ", order)
-
 
         res.json({
             success: true,
@@ -55,6 +53,14 @@ const RazorPaymentVerify = async (req, res) => {
             razorpay_signature,
         } = req.body;
 
+
+        console.log(
+            userId,
+            courseId,
+            razorpay_order_id,
+            razorpay_payment_id,
+            razorpay_signature,)
+
         // Verify Signature
         const generatedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
@@ -67,6 +73,9 @@ const RazorPaymentVerify = async (req, res) => {
                 message: "Payment verification failed",
             });
         }
+        // const userId = req.user?._id;
+        console.log("userId : ", userId)
+        console.log("courseId : ", courseId)
 
         // Course Id Push
         await User.findByIdAndUpdate(

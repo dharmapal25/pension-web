@@ -1,8 +1,8 @@
 const express = require("express");
+const Routes = express.Router();
 
 const { RazorPaymentOrder, RazorPaymentVerify } = require("../controllers/payment.controller");
 
-const Routes = express.Router();
 
 // api/payment/order-verify
 Routes.post("/order-verify", RazorPaymentOrder);
