@@ -1,44 +1,32 @@
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState } from "react";
 import API from "../services/api";
 
 const useAuthUser = () => {
-  const [user, setUser] = useState({
-    _id: null,
-    email: null,
-    role: null,
-  });
-
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const fetchUser = async () => {
     try {
       setLoading(true);
 
-      const res = await axios.get(`${API}/auth/me`, {
+      const { data } = await API.get("/auth/me", {
         withCredentials: true,
       });
 
-      setUser(res.data);
-    } catch {
-      setUser({
-        _id: null,
-        email: null,
-        role: null,
-      });
+      setUser(data);
+      return data;
+    } catch (err) {
+      setUser(null);
+      return null;
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
   return {
-    ...user,
+    user,
     loading,
-    refetch: fetchUser,
+    fetchUser,
   };
 };
 

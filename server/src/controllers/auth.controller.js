@@ -3,59 +3,88 @@ const User = require("../models/users.model");
 const auth = require("../config/adminFirebase");
 
 const instructorLoginGoogle = async (req, res) => {
-
   try {
-
-    // const { name, email, firebaseUid, profileImage, role, isInstructor, boughtCourses } = req.body
-    const { idToken, role } = req.body;
+    const { idToken } = req.body;
 
     if (!idToken) {
       return res.status(400).json({
-        message: "Firebase token are required"
+        success: false,
+        message: "Firebase idToken is required",
       });
     }
 
+    // Verify Firebase Token
     const decodedToken = await auth.verifyIdToken(idToken);
 
+    const {
+      uid,
+      email,
+      name,
+      picture,
+    } = decodedToken;
 
-
-    const { uid, email, name, picture } = decodedToken;
-
-    const user = await User.findOne({ email });
+    // Find existing user
+    let user = await User.findOne({ firebaseUid: uid });
 
     if (!user) {
+      // Create new instructor
       user = await User.create({
-        email,
         name,
+        email,
         firebaseUid: uid,
-        avatar: picture,
+        profileImage: picture,
         role: "instructor",
+        isInstructor: true,
       });
+    } else {
+      // Update existing user if needed
+      user.name = name || user.name;
+      user.profileImage = picture || user.profileImage;
+      user.role = "instructor";
+      user.isInstructor = true;
+
+      await user.save();
     }
 
-    const token = jwt.sign({
-      id: user._id,
-      email: user.email,
-      role: user.role
-    },
+    // JWT
+    const token = jwt.sign(
+      {
+        id: user._id,
+        email: user.email,
+        role: user.role,
+      },
       process.env.JWT_SECRET,
-
-      { expiresIn: "7d" }
+      {
+        expiresIn: "7d",
+      }
     );
 
-    res.json({ token }).cookie("token", token, {
+    // Cookie
+    res.cookie("token", token, {
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
+    return res.status(200).json({
+      success: true,
+      message: "Instructor login successful",
+      user: {
+        id: user._id,
+        user
+      },
+    });
 
   } catch (err) {
-    res.status(500).json({
-      message: "Error occurred while logging in user",
-      error: err.message
+    console.error(err);
+
+    return res.status(500).json({
+      success: false,
+      message: "Error occurred while logging in instructor",
+      error: err.message,
     });
   }
-}
+};
+
 
 const instructorLogoutGoogle = (req, res) => {
   res.clearCookie("token", {

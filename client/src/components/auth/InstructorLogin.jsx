@@ -7,88 +7,77 @@ import { signInWithPopup, signOut } from "firebase/auth";
 import API from "../../services/api";
 import useAuthUser from "../../hooks/useAuthRole";
 import { auth as firebaseAuth, googleProvider } from "../../config/firebase";
-
+import "../../App.css"
+import { useState } from "react";
 const InstructorLogin = () => {
+
     const navigate = useNavigate();
+    let [loading, setLoading] = useState(false);
 
-    const { _id, role, loading, refetch } = useAuthUser();
+    // const { user, fetchUser } = useAuthUser();
 
-    // Login redirect
-    useEffect(() => {
-        if (!loading && role === "instructor" && _id) {
-            navigate(`/instructor/${_id}`);
-        }
-    }, [loading, role, _id, navigate]);
 
     // Google Login
     const handleInstructorLogin = async () => {
         try {
+            setLoading(true);
             const result = await signInWithPopup(firebaseAuth, googleProvider);
-
             const idToken = await result.user.getIdToken();
 
-            console.log("idToken : >>  ",idToken)
-
-
-            let data = await API.post("/auth/instructor/google-login",
-                {
-                    idToken,
-                    role: "instructor",
-                },
+            const { data } = await API.post(
+                "/auth/instructor/google-login",
+                { idToken },
                 {
                     withCredentials: true,
                 }
             );
 
-            console.log("data : >>  ",data)
+            console.log(data);
 
-            await refetch();
+            navigate(`/instructor/profile/${data.user.id}`, {
+                state: data.user,
+            });
+
         } catch (err) {
             console.log("Login Error:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
     // Logout
-    const handleInstructorLogout = async () => {
-        try {
-            // Backend cookie remove
-            // api/auth/instructor/google-login
+    // const handleInstructorLogout = async () => {
+    //     try {
+    //         // Backend cookie remove
+    //         // api/auth/instructor/google-login
 
-            await API.post("/auth/instructor/google-logout",
-                {},
-                {
-                    withCredentials: true,
-                }
-            );
+    //         await API.post("/auth/instructor/google-logout",
+    //             {},
+    //             {
+    //                 withCredentials: true,
+    //             }
+    //         );
+    //         await signOut(firebaseAuth);
 
-            // Firebase logout
-            await signOut(firebaseAuth);
+    //         navigate(`/login`);
 
-            await refetch();
-
-
-            navigate("/instructor/login");
-        } catch (err) {
-            console.log("Logout Error:", err);
-        }
-    };
+    //     } catch (err) {
+    //         console.log("Logout Error:", err);
+    //     }
+    // };
 
     return (
-        <div>
-            <div className="auth-card instructor__auth">
-                <div className="auth-header">
-                    <span className="badge instructor-badge">Instructor-</span>
+        <>
+            <h1>hello</h1>
+            <div>
+                <div className="auth-card instructor__auth">
+                    <div className="auth-header">
+                        <span className="badge instructor-badge">Instructor</span>
 
-                    <h2>Teaching Portal</h2>
+                        <h2>Teaching Portal</h2>
+                        <p>Manage your students, classes, and course content.</p>
+                    </div>
 
-                    <p>Manage your students, classes, and course content.</p>
-                </div>
-
-                {role === "instructor" ? (
-                    <button className="google-btn" onClick={handleInstructorLogout}>
-                        Logout
-                    </button>
-                ) : (
                     <button
                         className="google-btn"
                         onClick={handleInstructorLogin}
@@ -98,12 +87,13 @@ const InstructorLogin = () => {
                         <span>
                             {loading
                                 ? "Loading..."
-                                : "Login as Instructor with Google"}
+                                : "Login as instructor with Google"}
                         </span>
                     </button>
-                )}
+
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

@@ -10,6 +10,7 @@ import CourseInfo from './components/courses/OpenCourse.jsx'
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import Login from './pages/Login.jsx'
+import Instructor from './pages/Instructor.jsx'
 
 
 const AllRoutes = createBrowserRouter([
@@ -42,7 +43,17 @@ const AllRoutes = createBrowserRouter([
       <ProtectedRoute>
         <Offers />
       </ProtectedRoute>
-  }
+  },
+
+  {
+    path: "/instructor/profile/:id",
+    element:
+      <ProtectedRoute>
+        <Instructor />
+      </ProtectedRoute>
+  },
+
+
 
 ])
 
