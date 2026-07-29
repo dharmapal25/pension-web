@@ -8,6 +8,13 @@ const authRoute = express.Router();
 // api/auth/instructor/google-login
 authRoute.post("/instructor/google-login",instructorLoginGoogle);
 
+//test route 
+// authRoute.post("/instructor/google-login",(req,res)=> {
+//     res.json({
+//         msg : "hello"
+//     })
+// });
+
 // api/auth/instructor/google-logout
 authRoute.post("/instructor/google-logout",instructorLogoutGoogle);
 

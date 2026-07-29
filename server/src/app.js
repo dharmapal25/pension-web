@@ -6,9 +6,9 @@ const cookieParser = require("cookie-parser");
 const Routes = require("./routers/payment.route");
 const courseRoute = require("./routers/course.route");
 const instructorRoute = require("./routers/instructor.route");
-const authRoute = require("./routers/auth.route");
 const verifyToken = require("./middlewares/verifyToken");
 const Course = require("./models/courses.model");
+const authRoute = require("./routers/auth.route");
 
 const app = express();
 
@@ -24,8 +24,9 @@ app.use("/api/payment", Routes);
 app.use("/api/instructor", instructorRoute);
 
 app.use("/api/online", courseRoute);
-app.use("/api/auth", authRoute);
 
+// api/auth/instructor/google-login
+app.use("/api/auth", authRoute);
 
 
 app.get("/test", async (req, res) => {

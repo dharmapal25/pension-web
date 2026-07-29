@@ -1,10 +1,8 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/users.model");
-const { default: admin } = require("../config/adminFirebase");
+const auth = require("../config/adminFirebase");
 
-// instructor auth
-
-const instructorLoginGoogle = async () => {
+const instructorLoginGoogle = async (req, res) => {
 
   try {
 
@@ -17,9 +15,11 @@ const instructorLoginGoogle = async () => {
       });
     }
 
-    const decodedToken = await admin.auth().verifyIdToken(idToken);
-    const { uid, email, name, picture } = decodedToken;
+    const decodedToken = await auth.verifyIdToken(idToken);
 
+
+
+    const { uid, email, name, picture } = decodedToken;
 
     const user = await User.findOne({ email });
 

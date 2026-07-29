@@ -27,8 +27,10 @@ const InstructorLogin = () => {
 
             const idToken = await result.user.getIdToken();
 
-            await axios.post(
-                `${API}/auth/instructor/google-login`,
+            console.log("idToken : >>  ",idToken)
+
+
+            let data = await API.post("/auth/instructor/google-login",
                 {
                     idToken,
                     role: "instructor",
@@ -37,6 +39,8 @@ const InstructorLogin = () => {
                     withCredentials: true,
                 }
             );
+
+            console.log("data : >>  ",data)
 
             await refetch();
         } catch (err) {
@@ -48,8 +52,9 @@ const InstructorLogin = () => {
     const handleInstructorLogout = async () => {
         try {
             // Backend cookie remove
-            await axios.post(
-                `${API}/auth/instructor/google-logout`,
+            // api/auth/instructor/google-login
+
+            await API.post("/auth/instructor/google-logout",
                 {},
                 {
                     withCredentials: true,
@@ -61,6 +66,7 @@ const InstructorLogin = () => {
 
             await refetch();
 
+
             navigate("/instructor/login");
         } catch (err) {
             console.log("Logout Error:", err);
@@ -71,7 +77,7 @@ const InstructorLogin = () => {
         <div>
             <div className="auth-card instructor__auth">
                 <div className="auth-header">
-                    <span className="badge instructor-badge">Instructor</span>
+                    <span className="badge instructor-badge">Instructor-</span>
 
                     <h2>Teaching Portal</h2>
 

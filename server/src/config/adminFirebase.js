@@ -1,4 +1,5 @@
 const { initializeApp, cert } = require("firebase-admin/app");
+const { getAuth } = require("firebase-admin/auth");
 
 const admin = initializeApp({
   credential: cert({
@@ -7,6 +8,10 @@ const admin = initializeApp({
     client_email: process.env.FIREBASE_CLIENT_EMAIL
 
   }),
+
 });
 
-module.exports = admin;
+
+const auth = getAuth(admin);
+
+module.exports = auth;
