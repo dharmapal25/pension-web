@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import "./CourseForm.css";
 
-// Schema ke hisaab se enums (backend ke exact same rakhe hain, warna validation error aayega)
+// These must match the backend schema enums exactly, or validation will fail
 const CATEGORIES = [
   "Web Development",
   "Data Science",
@@ -15,13 +15,13 @@ const CATEGORIES = [
 const LEVELS = ["beginner", "intermediate", "advanced"];
 const LANGUAGES = ["English", "Hindi", "Spanish", "French", "German"];
 
-// Ek empty lecture ka default shape - "Add Lecture" click hone par yehi object array me push hoga
+// Default shape of one empty lecture, used when "Add Lecture" is clicked
 const emptyLecture = () => ({
   title: "",
   videoUrl: "",
   duration: "",
   isPreview: false,
-  resources: "", // input me comma-separated string lenge, submit ke time array me convert karenge
+  resources: "", // comma separated string in the input, converted to array on submit
 });
 
 export default function CourseForm() {
@@ -30,26 +30,37 @@ export default function CourseForm() {
     subtitle: "",
     description: "",
     category: CATEGORIES[0],
-    tags: "", // comma separated -> submit par split hoga
+    tags: "", // comma separated, split into array on submit
     level: "beginner",
     language: "English",
-    thumbnail: "",
     price: 0,
     discount: 0,
-    whatYouWillLearn: "", // comma separated -> submit par split hoga
+    whatYouWillLearn: "", // comma separated, split into array on submit
   });
+
+  // Separate state for the thumbnail file (not part of formData object)
+  const [thumbnailFile, setThumbnailFile] = useState(null);
+  const [thumbnailPreview, setThumbnailPreview] = useState(null);
 
   const [lectures, setLectures] = useState([emptyLecture()]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  // ---------- Course fields ke changes handle karna ----------
+  // Handle changes for normal course fields
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // ---------- Lecture ke andar ke fields change karna ----------
+  // Handle thumbnail file selection + show a preview
+  const handleThumbnailChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setThumbnailFile(file);
+    setThumbnailPreview(URL.createObjectURL(file));
+  };
+
+  // Handle changes inside one lecture card
   const handleLectureChange = (index, field, value) => {
     setLectures((prev) =>
       prev.map((lec, i) => (i === index ? { ...lec, [field]: value } : lec))
@@ -64,75 +75,79 @@ export default function CourseForm() {
     setLectures((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // ---------- Submit ----------
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ type: "", text: "" });
 
-    // Basic validation (schema ke required fields ke hisaab se)
-    if (!formData.title || !formData.subtitle || !formData.description || !formData.thumbnail) {
-      setMessage({ type: "error", text: "Sab required fields bharo (title, subtitle, description, thumbnail)." });
+    // Basic validation for required fields
+    if (!formData.title || !formData.subtitle || !formData.description) {
+      setMessage({ type: "error", text: "Please fill title, subtitle and description." });
+      return;
+    }
+    if (!thumbnailFile) {
+      setMessage({ type: "error", text: "Please upload a thumbnail image." });
       return;
     }
     if (lectures.length === 0) {
-      setMessage({ type: "error", text: "Kam se kam ek lecture add karo." });
+      setMessage({ type: "error", text: "Add at least one lecture." });
       return;
     }
     for (const lec of lectures) {
       if (!lec.title || !lec.videoUrl || !lec.duration) {
-        setMessage({ type: "error", text: "Har lecture me title, videoUrl aur duration required hai." });
+        setMessage({ type: "error", text: "Every lecture needs a title, video URL and duration." });
         return;
       }
     }
 
-    // Payload ko schema ke exact shape me convert karna
-    const payload = {
-      title: formData.title,
-      subtitle: formData.subtitle,
-      description: formData.description,
-      category: formData.category,
-      tags: formData.tags
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-      level: formData.level,
-      language: formData.language,
-      thumbnail: formData.thumbnail,
-      price: Number(formData.price) || 0,
-      discount: Number(formData.discount) || 0,
-      whatYouWillLearn: formData.whatYouWillLearn
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
-      lectures: lectures.map((lec) => ({
-        title: lec.title,
-        videoUrl: lec.videoUrl,
-        duration: Number(lec.duration),
-        isPreview: lec.isPreview,
-        resources: lec.resources
-          .split(",")
-          .map((r) => r.trim())
-          .filter(Boolean),
-      })),
-    };
+    // Convert comma separated strings into clean arrays
+    const tagsArray = formData.tags.split(",").map((t) => t.trim()).filter(Boolean);
+    const whatYouWillLearnArray = formData.whatYouWillLearn
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
+
+    const lecturesArray = lectures.map((lec) => ({
+      title: lec.title,
+      videoUrl: lec.videoUrl,
+      duration: Number(lec.duration),
+      isPreview: lec.isPreview,
+      resources: lec.resources.split(",").map((r) => r.trim()).filter(Boolean),
+    }));
+
+    // Backend expects multipart/form-data because of the file upload,
+    // so arrays/objects (lectures, tags, whatYouWillLearn) must be sent as JSON strings
+    const form = new FormData();
+    form.append("title", formData.title);
+    form.append("subtitle", formData.subtitle);
+    form.append("description", formData.description);
+    form.append("category", formData.category);
+    form.append("level", formData.level);
+    form.append("language", formData.language);
+    form.append("price", formData.price);
+    form.append("discount", formData.discount);
+    form.append("tags", JSON.stringify(tagsArray));
+    form.append("whatYouWillLearn", JSON.stringify(whatYouWillLearnArray));
+    form.append("lectures", JSON.stringify(lecturesArray));
+    form.append("thumbnail", thumbnailFile); // actual file, field name must match multer config
 
     try {
       setLoading(true);
-      const token = localStorage.getItem("token"); // agar JWT auth use kar rahe ho
+      // Backend reads the JWT from an httpOnly cookie, so we don't attach
+      // an Authorization header. withCredentials makes the browser send
+      // that cookie automatically with the request.
       const { data } = await axios.post(
         "http://localhost:3000/api/instructor/upload-course",
-        payload,
+        form,
         {
-          headers: {
-            "Content-Type": "application/json",
-            ...(token && { Authorization: `Bearer ${token}` }),
-          },
+          withCredentials: true,
+          // Do NOT set Content-Type manually for FormData,
+          // the browser sets it automatically with the correct boundary
         }
       );
-      setMessage({ type: "success", text: "Course upload ho gaya!" });
+      setMessage({ type: "success", text: "Course uploaded successfully!" });
       console.log("Response:", data);
 
-      // Form reset
+      // Reset form after success
       setFormData({
         title: "",
         subtitle: "",
@@ -141,17 +156,18 @@ export default function CourseForm() {
         tags: "",
         level: "beginner",
         language: "English",
-        thumbnail: "",
         price: 0,
         discount: 0,
         whatYouWillLearn: "",
       });
+      setThumbnailFile(null);
+      setThumbnailPreview(null);
       setLectures([emptyLecture()]);
     } catch (err) {
       console.error(err);
       setMessage({
         type: "error",
-        text: err.response?.data?.message || "Kuch galat ho gaya, backend check karo.",
+        text: err.response?.data?.message || "Something went wrong, check the backend.",
       });
     } finally {
       setLoading(false);
@@ -169,7 +185,7 @@ export default function CourseForm() {
         )}
 
         <form onSubmit={handleSubmit} className="course-form">
-          {/* --- Basic Info --- */}
+          {/* Basic info */}
           <div className="field-group">
             <label className="field-label">Title *</label>
             <input
@@ -205,18 +221,16 @@ export default function CourseForm() {
             />
           </div>
 
+          {/* Thumbnail file upload */}
           <div className="field-group">
-            <label className="field-label">Thumbnail URL *</label>
-            <input
-              type="text"
-              name="thumbnail"
-              value={formData.thumbnail}
-              onChange={handleChange}
-              placeholder="Cloudinary image URL"
-            />
+            <label className="field-label">Thumbnail Image *</label>
+            <input type="file" accept="image/*" onChange={handleThumbnailChange} />
+            {thumbnailPreview && (
+              <img src={thumbnailPreview} alt="Thumbnail preview" className="thumbnail-preview" />
+            )}
           </div>
 
-          {/* --- Category / Level / Language --- */}
+          {/* Category / Level / Language */}
           <div className="field-row">
             <div className="field-group">
               <label className="field-label">Category</label>
@@ -246,7 +260,7 @@ export default function CourseForm() {
             </div>
           </div>
 
-          {/* --- Price / Discount --- */}
+          {/* Price / Discount */}
           <div className="field-row two">
             <div className="field-group">
               <label className="field-label">Price (₹)</label>
@@ -271,7 +285,7 @@ export default function CourseForm() {
             </div>
           </div>
 
-          {/* --- Tags / What you'll learn --- */}
+          {/* Tags / What you'll learn */}
           <div className="field-group">
             <label className="field-label">Tags (comma separated)</label>
             <input
@@ -294,7 +308,7 @@ export default function CourseForm() {
             />
           </div>
 
-          {/* --- Lectures section --- */}
+          {/* Lectures section */}
           <div>
             <hr className="course-form-divider" />
             <div className="lectures-header" style={{ marginTop: 20 }}>

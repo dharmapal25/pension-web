@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider } from 'react-router-dom'
 
 import Courses from './pages/Courses.jsx'
 import Home from './pages/Home.jsx'
@@ -14,6 +14,10 @@ import Instructor from './pages/Profile.jsx'
 
 
 const AllRoutes = createBrowserRouter([
+  {
+    path: "/",
+    element: <Navigate to="/home" replace />,
+  },
 
   {
     path: "/home",

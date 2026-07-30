@@ -3,10 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
 import { signInWithPopup, signOut } from "firebase/auth";
+import { auth as firebaseAuth, googleProvider } from "../../config/firebase";
 
 import API from "../../services/api";
 import useAuthUser from "../../hooks/useAuthRole";
-import { auth as firebaseAuth, googleProvider } from "../../config/firebase";
 import "../../App.css"
 import { useState } from "react";
 const InstructorLogin = () => {

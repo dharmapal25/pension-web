@@ -2,9 +2,15 @@ import React from "react";
 import useUsers from "../hooks/useUsers";
 import ERROR404 from "../components/ERROR404";
 import CourseForm from "../components/courses/CourseForm";
+import API from "../services/api";
+import { useState } from "react";
+import { signInWithPopup, signOut } from "firebase/auth";
+import { auth as firebaseAuth, googleProvider } from "../config/firebase";
 
 const Instructor = () => {
   const { user, person, loading, error } = useUsers();
+
+  const[load,setLoad] = useState(false);
 
   if (loading) {
     return <h2 style={{ textAlign: "center", marginTop: "40px" }}>Loading...</h2>;
@@ -18,7 +24,32 @@ const Instructor = () => {
     return <h2>{error}</h2>;
   }
 
-  console.log(person.student.role)
+
+      // Logout
+    const handleInstructorLogout = async () => {
+        try {
+          setLoad(true)
+            // Backend cookie remove
+            // api/auth/instructor/google-login   | student
+
+            await API.post(`/auth/${person.student.role}/google-logout`,
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+            await signOut(firebaseAuth);
+
+            navigate(`/login`);
+
+        } catch (err) {
+            console.log("Logout Error:", err);
+        }finally{
+          setLoad(false)
+        }
+    };
+
+
 
   return (
     <div
@@ -67,6 +98,17 @@ const Instructor = () => {
         <p>
           <strong>User ID:</strong> {user?.id}
         </p>
+      </div>
+
+      <div className="logout-section">
+        <button onClick={handleInstructorLogout}  >
+          {
+            (!load) ?
+            "Logout"
+            :
+            "loading..."
+          }
+        </button>
       </div>
 
       {
