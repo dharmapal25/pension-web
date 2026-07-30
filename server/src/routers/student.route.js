@@ -1,5 +1,6 @@
 const express = require("express");
-const { studentProfile } = require("../controllers/student.controller");
+const { studentProfile, studentCourses } = require("../controllers/student.controller");
+const verifyToken = require("../middlewares/verifyToken");
 const studentRoute = express.Router();
 
 
@@ -7,10 +8,8 @@ const studentRoute = express.Router();
 studentRoute.post("/profile", studentProfile);
 
 
-// student Id
-
-// api/student/:id
-// studentRoute.post()
+// api/student/view-courses
+studentRoute.get("/view-courses", verifyToken, studentCourses);
 
 
 module.exports = studentRoute

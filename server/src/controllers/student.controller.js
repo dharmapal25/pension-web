@@ -27,11 +27,40 @@ const studentProfile = async (req, res) => {
 };
 
 
-const studentCourses = async (req,res) => {
-    
+const studentCourses = async (req, res) => {
+
+    try {
+        const studentId = req.user?.id;
+
+        if (!studentId) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            });
+        }
+
+        const studentCourse = await User.findById( studentId )
+            .populate("boughtCourses");
+
+
+        return res.status(200).json({
+            success: true,
+            studentId,
+            Course : studentCourse
+        });
+
+    } catch (error) {
+        console.error("View Course Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
 }
 
 
 module.exports = {
-    studentProfile
+    studentProfile,
+    studentCourses
 }

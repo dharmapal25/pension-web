@@ -6,11 +6,12 @@ import API from "../services/api";
 import { useState } from "react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { auth as firebaseAuth, googleProvider } from "../config/firebase";
+import StudentLecture from "../components/Purchase/StudentLecture";
 
 const Instructor = () => {
   const { user, person, loading, error } = useUsers();
 
-  const[load,setLoad] = useState(false);
+  const [load, setLoad] = useState(false);
 
   if (loading) {
     return <h2 style={{ textAlign: "center", marginTop: "40px" }}>Loading...</h2>;
@@ -25,29 +26,29 @@ const Instructor = () => {
   }
 
 
-      // Logout
-    const handleInstructorLogout = async () => {
-        try {
-          setLoad(true)
-            // Backend cookie remove
-            // api/auth/instructor/google-login   | student
+  // Logout
+  const handleInstructorLogout = async () => {
+    try {
+      setLoad(true)
+      // Backend cookie remove
+      // api/auth/instructor/google-login   | student
 
-            await API.post(`/auth/${person.student.role}/google-logout`,
-                {},
-                {
-                    withCredentials: true,
-                }
-            );
-            await signOut(firebaseAuth);
-
-            navigate(`/login`);
-
-        } catch (err) {
-            console.log("Logout Error:", err);
-        }finally{
-          setLoad(false)
+      await API.post(`/auth/${person.student.role}/google-logout`,
+        {},
+        {
+          withCredentials: true,
         }
-    };
+      );
+      await signOut(firebaseAuth);
+
+      navigate(`/login`);
+
+    } catch (err) {
+      console.log("Logout Error:", err);
+    } finally {
+      setLoad(false)
+    }
+  };
 
 
 
@@ -104,12 +105,16 @@ const Instructor = () => {
         <button onClick={handleInstructorLogout}  >
           {
             (!load) ?
-            "Logout"
-            :
-            "loading..."
+              "Logout"
+              :
+              "loading..."
           }
         </button>
       </div>
+
+      {
+        person.student.role == "student" && <StudentLecture />
+      }
 
       {
         person.student.role == "instructor" && <CourseForm />

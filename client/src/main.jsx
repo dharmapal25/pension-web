@@ -11,6 +11,7 @@ import ProtectedRoute from './components/auth/ProtectedRoute.jsx'
 import { AuthProvider } from './context/AuthContext.jsx'
 import Login from './pages/Login.jsx'
 import Instructor from './pages/Profile.jsx'
+import StudyDashboard from './components/Purchase/StudyDashboard.jsx'
 
 
 const AllRoutes = createBrowserRouter([
@@ -54,6 +55,14 @@ const AllRoutes = createBrowserRouter([
         <Instructor />
       </ProtectedRoute>
   },
+  {
+    path: "learn/:id",
+    element:
+      <ProtectedRoute>
+        <StudyDashboard />
+      </ProtectedRoute>
+  },
+
 
 
 

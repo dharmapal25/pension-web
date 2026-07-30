@@ -30,7 +30,7 @@ app.use("/api/online", courseRoute);
 // api/auth/instructor/google-login
 app.use("/api/auth", authRoute);
 
-app.use("/api/student/",  studentRoute)
+app.use("/api/student",  studentRoute)
 
 
 // app.get("/api/test",verifyToken, async (req, res) => {

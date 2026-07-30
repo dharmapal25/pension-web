@@ -126,10 +126,8 @@ const viewCourse = async (req, res) => {
         }
 
 
-        // const instructorCourses = await Course.find({ instructor: instructorId })
-        // // .populate("boughtCourses");
+
         const instructorCourses = await User.find({ instructor: instructorId })
-        // // .populate("boughtCourses");
 
         if (!instructorCourses) {
             return res.status(404).json({
