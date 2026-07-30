@@ -30,6 +30,7 @@ const AllRoutes = createBrowserRouter([
     path: "/login",
     element: <Login />
   },
+  
   {
     path: "/courses",
     element: <Courses />

@@ -4,30 +4,28 @@ import API from '../../services/api'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const StudentLecture = () => {
+const InstructorLecture = () => {
 
     const [load, setLoading] = useState(false);
     const [error, setError] = useState("");
     const [course, setCourse] = useState([]);
     const navigate = useNavigate();
-
-    let [id,setId] = useState("");
+    let [id, setId] = useState("");
 
     useEffect(() => {
 
         setLoading(true)
 
-        API.get('/student/view-courses',
+        API.get('/instructor/view-course',
             { withCredentials: true, }
         )
             .then((res) => {
-                console.log("Response : ", res.data)
-                setId(res.data.studentId)
-                setCourse(res.data.Course.boughtCourses);
+                console.log("Response>>> : ", res.data)
+                setCourse(res.data.courses.createdCourses);
 
             }).catch((err) => {
                 console.log("Error : ", err)
-                // setError(err.message || "Something went wrong")
+                setError(err.message || "Something went wrong")
 
             }).finally(() => {
                 setLoading(false)
@@ -86,12 +84,12 @@ const StudentLecture = () => {
                             </p>
 
                             <div className="course__tags">
-                               tags :  {elm.tags.map((tag) => (
+                                tags :  {elm.tags.map((tag) => (
                                     <span key={tag}>{tag}</span>
                                 ))}
                             </div>
 
-                            <button onClick={()=> navigate(`/learn/${elm._id}`)} > Lectures </button>
+                            <button onClick={() => navigate(`/learn/${elm._id}`)} > Lectures </button>
 
                         </div>
                     </div>
@@ -102,4 +100,4 @@ const StudentLecture = () => {
     )
 }
 
-export default StudentLecture
+export default InstructorLecture

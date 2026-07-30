@@ -7,6 +7,7 @@ import { useState } from "react";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { auth as firebaseAuth, googleProvider } from "../config/firebase";
 import StudentLecture from "../components/Purchase/StudentLecture";
+import InstructorLecture from "../components/Purchase/InstructorLecture";
 
 const Instructor = () => {
   const { user, person, loading, error } = useUsers();
@@ -117,7 +118,7 @@ const Instructor = () => {
       }
 
       {
-        person.student.role == "instructor" && <CourseForm />
+        person.student.role == "instructor" && <InstructorLecture />
       }
 
     </div>

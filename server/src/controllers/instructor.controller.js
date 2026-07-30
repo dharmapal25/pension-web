@@ -126,10 +126,10 @@ const viewCourse = async (req, res) => {
         }
 
 
+        const createdCourses = await User.findById(instructorId)
+        .populate("createdCourses");
 
-        const instructorCourses = await User.find({ instructor: instructorId })
-
-        if (!instructorCourses) {
+        if (!createdCourses) {
             return res.status(404).json({
                 success: false,
                 message: "Instructor not found",
@@ -138,8 +138,8 @@ const viewCourse = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            totalCourses: instructorCourses.courses?.length,
-            courses: instructorCourses,
+            totalCourses: createdCourses.courses?.length,
+            courses: createdCourses,
         });
 
     } catch (error) {
