@@ -5,13 +5,22 @@ import CourseForm from '../components/courses/CourseForm';
 import Login from './Login';
 import axios from 'axios';
 import "../App.css"
+import API from '../services/api';
 const Home = () => {
 
   useEffect(() => {
-    axios.get("http://localhost:3000/test").then((res) => {
-      console.log(res)
+    API.get("/instructor/view-course", {
+      withCredentials: true,
     })
+
+      .then((res) => {
+        console.log("res >> ", res)
+      }).catch((err) => {
+
+        console.log("Error >> ", err)
+      })
   }, [])
+
 
   const { user, loading } = useAuth();
   // console.log(user.displayName)
@@ -33,7 +42,8 @@ const Home = () => {
 
       <br />
       <br />
-      <Login />
+      {/* <Login /> */}
+
 
     </div>
   )

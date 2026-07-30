@@ -10,6 +10,7 @@ const verifyToken = require("./middlewares/verifyToken");
 const Course = require("./models/courses.model");
 const authRoute = require("./routers/auth.route");
 const studentRoute = require("./routers/student.route");
+const User = require("./models/users.model");
 
 const app = express();
 
@@ -32,9 +33,11 @@ app.use("/api/auth", authRoute);
 app.use("/api/student/",  studentRoute)
 
 
-app.get("/test", async (req, res) => {
+// app.get("/api/test",verifyToken, async (req, res) => {
+app.get("/api/test", async (req, res) => {
 
-    let data = await Course.find()
+    let data = await User.find()
+    // let data = req.user
 
     res.json({
         msg: "hello",

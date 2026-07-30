@@ -1,5 +1,6 @@
 const imagekit = require('../config/imagekit');
 const Course = require('../models/courses.model');
+const User = require('../models/users.model');
 
 const uploadCourse = async (req, res) => {
     try {
@@ -83,6 +84,16 @@ const uploadCourse = async (req, res) => {
 
         const newCourse = await Course.create(courseInfo);
 
+        await User.findByIdAndUpdate(
+            instructor,
+            {
+                $addToSet: {
+                    createdCourses: newCourse._id,
+                },
+            },
+            { new: true }
+        );
+
         return res.status(201).json({
             success: true,
             message: 'Course uploaded successfully!',
@@ -102,4 +113,45 @@ const uploadCourse = async (req, res) => {
     }
 };
 
-module.exports = { uploadCourse };
+const viewCourse = async (req, res) => {
+    try {
+        console.log(req.user)
+
+        const instructorId = req.user?.id;
+        if (!instructorId) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized'
+            });
+        }
+
+
+        // const instructorCourses = await Course.find({ instructor: instructorId })
+        // // .populate("boughtCourses");
+        const instructorCourses = await User.find({ instructor: instructorId })
+        // // .populate("boughtCourses");
+
+        if (!instructorCourses) {
+            return res.status(404).json({
+                success: false,
+                message: "Instructor not found",
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            totalCourses: instructorCourses.courses?.length,
+            courses: instructorCourses,
+        });
+
+    } catch (error) {
+        console.error("View Course Error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+        });
+    }
+};
+
+module.exports = { uploadCourse, viewCourse };

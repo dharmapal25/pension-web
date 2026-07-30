@@ -37,12 +37,18 @@ const userSchema = new mongoose.Schema(
 
     // Student-specific
     boughtCourses: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course"
+      },
     ],
 
     // Instructor-specific
     createdCourses: [
-      { type: mongoose.Schema.Types.ObjectId, ref: "Course" },
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Course"
+      },
     ],
   },
   { timestamps: true }
