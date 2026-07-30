@@ -4,10 +4,13 @@ import ERROR404 from "../components/ERROR404";
 import CourseForm from "../components/courses/CourseForm";
 import API from "../services/api";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { signInWithPopup, signOut } from "firebase/auth";
 import { auth as firebaseAuth, googleProvider } from "../config/firebase";
 import StudentLecture from "../components/Purchase/StudentLecture";
 import InstructorLecture from "../components/Purchase/InstructorLecture";
+import CircularLoader from "../components/ui/CircularLoader";
+import ErrorToast from "../components/ui/ErrorToast";
 
 const Instructor = () => {
   const { user, person, loading, error } = useUsers();
@@ -15,7 +18,7 @@ const Instructor = () => {
   const [load, setLoad] = useState(false);
 
   if (loading) {
-    return <h2 style={{ textAlign: "center", marginTop: "40px" }}>Loading...</h2>;
+    return <CircularLoader fullPage />;
   }
 
   if (!user) {
@@ -23,7 +26,7 @@ const Instructor = () => {
   }
 
   if (error) {
-    return <h2>{error}</h2>;
+    return <ErrorToast message={error} />;
   }
 
 
@@ -54,74 +57,47 @@ const Instructor = () => {
 
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        marginTop: "50px",
-      }}
-    >
-      <div
-        style={{
-          width: "350px",
-          padding: "25px",
-          border: "1px solid #ddd",
-          borderRadius: "12px",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          textAlign: "center",
-          background: "#fff",
-        }}
-      >
-        <img
-          src={
-            person.student.profileImage ||
-            "https://via.placeholder.com/120"
-          }
-          alt="Profile"
-          style={{
-            width: "120px",
-            height: "120px",
-            borderRadius: "50%",
-            objectFit: "cover",
-            marginBottom: "20px",
-          }}
-        />
+    <main className="profile-page">
+      <section className="profile-card">
+        <div className="profile-cover" />
+        <Link className="profile-back" to="/home">← Back to home</Link>
+        <div className="profile-content">
+          <div className="avatar-frame">
+            <img src={person.student.profileImage || "https://via.placeholder.com/120"} alt="Profile" className="profile-avatar" />
+          </div>
+          <span className="profile-role">{person.student.role}</span>
+          <h1>{person.student.name || "No Name"}</h1>
+          <p className="profile-email">{person.student.email}</p>
+          <div className="profile-details">
+            <div><span>Account type</span><strong>{person.student.role}</strong></div>
+            <div><span>User ID</span><strong title={user?.id}>{user?.id}</strong></div>
+          </div>
+        </div>
+      </section>
 
-        <h2>{name || "No Name"}</h2>
+      <section className="profile-learning">
+        <div className="profile-learning-header">
+          
+          <div>
+            <p className="eyebrow">Your space</p>
+            <h2>{person.student.role === "student" ? "Your learning library" : "Your course library"}</h2>
+          </div>
 
-        <p>
-          <strong>Email:</strong> {person.student.email}
-        </p>
-
-        <p>
-          <strong>Role:</strong> {person.student.role}
-        </p>
-
-        <p>
-          <strong>User ID:</strong> {user?.id}
-        </p>
-      </div>
-
-      <div className="logout-section">
-        <button onClick={handleInstructorLogout}  >
-          {
-            (!load) ?
-              "Logout"
-              :
-              "loading..."
-          }
-        </button>
-      </div>
-
-      {
-        person.student.role == "student" && <StudentLecture />
-      }
-
-      {
-        person.student.role == "instructor" && <InstructorLecture />
-      }
-
-    </div>
+          <div className="logout-section">
+            <button className="logout-button" onClick={handleInstructorLogout}>
+              {
+                (!load) ?
+                  "Logout"
+                  :
+                  "loading..."
+              }
+            </button>
+          </div>
+        </div>
+        {person.student.role == "student" && <StudentLecture />}
+        {person.student.role == "instructor" && <InstructorLecture />}
+      </section>
+    </main>
   );
 };
 

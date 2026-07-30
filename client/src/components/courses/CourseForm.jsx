@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import "./CourseForm.css";
+import CircularLoader from "../ui/CircularLoader";
+import ErrorToast from "../ui/ErrorToast";
 
 // These must match the backend schema enums exactly, or validation will fail
 const CATEGORIES = [
@@ -180,7 +182,8 @@ export default function CourseForm() {
         <p className="course-form-eyebrow">Instructor Studio</p>
         <h1 className="course-form-title">Upload New Course</h1>
 
-        {message.text && (
+        <ErrorToast message={message.type === "error" ? message.text : ""} onDismiss={() => setMessage({ type: "", text: "" })} />
+        {message.text && message.type !== "error" && (
           <div className={`course-form-banner ${message.type}`}>{message.text}</div>
         )}
 
@@ -376,7 +379,7 @@ export default function CourseForm() {
           </div>
 
           <button type="submit" disabled={loading} className="btn-submit">
-            {loading ? "Uploading..." : "Upload Course"}
+            {loading ? <CircularLoader label="Uploading course" /> : "Upload Course"}
           </button>
         </form>
       </div>

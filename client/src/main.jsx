@@ -12,6 +12,7 @@ import { AuthProvider } from './context/AuthContext.jsx'
 import Login from './pages/Login.jsx'
 import Instructor from './pages/Profile.jsx'
 import StudyDashboard from './components/Purchase/StudyDashboard.jsx'
+import ERROR404 from './components/ERROR404.jsx'
 
 
 const AllRoutes = createBrowserRouter([
@@ -62,6 +63,11 @@ const AllRoutes = createBrowserRouter([
       <ProtectedRoute>
         <StudyDashboard />
       </ProtectedRoute>
+  },
+  {
+    path: "*",
+    element:
+        <ERROR404 />
   },
 
 

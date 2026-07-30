@@ -1,18 +1,19 @@
-import React, { useEffect } from "react";
-import axios from "axios";
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { signInWithPopup, signOut } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import { auth as firebaseAuth, googleProvider } from "../../config/firebase";
 
 import API from "../../services/api";
-import useAuthUser from "../../hooks/useAuthRole";
 import "../../App.css"
 import { useState } from "react";
+import CircularLoader from "../ui/CircularLoader";
+import ErrorToast from "../ui/ErrorToast";
 const InstructorLogin = () => {
 
     const navigate = useNavigate();
     let [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     // const { user, fetchUser } = useAuthUser();
 
@@ -39,7 +40,7 @@ const InstructorLogin = () => {
             });
 
         } catch (err) {
-            console.log("Login Error:", err);
+            setError(err.response?.data?.message || err.message || "Login failed. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -67,15 +68,14 @@ const InstructorLogin = () => {
     // };
 
     return (
-        <>
-            <h1>hello</h1>
-            <div>
-                <div className="auth-card instructor__auth">
+        <div className="auth-option">
+            <ErrorToast message={error} onDismiss={() => setError("")} />
+            <div className="auth-card instructor__auth">
                     <div className="auth-header">
                         <span className="badge instructor-badge">Instructor</span>
 
-                        <h2>Teaching Portal</h2>
-                        <p>Manage your students, classes, and course content.</p>
+                        <h2>Teach and create</h2>
+                        <p>Manage your students, classes, and course content in one place.</p>
                     </div>
 
                     <button
@@ -86,14 +86,13 @@ const InstructorLogin = () => {
                         <FcGoogle />
                         <span>
                             {loading
-                                ? "Loading..."
+                            ? <CircularLoader label="Signing in" />
                                 : "Login as instructor with Google"}
                         </span>
                     </button>
 
-                </div>
             </div>
-        </>
+        </div>
     );
 };
 

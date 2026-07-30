@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { signInWithPopup, signOut } from "firebase/auth";
 
 import API from "../../services/api";
+import { signInWithPopup, signOut } from "firebase/auth";
 import useAuthUser from "../../hooks/useAuthRole";
 import { auth as firebaseAuth, googleProvider } from "../../config/firebase";
+
+import CircularLoader from "../ui/CircularLoader";
+import ErrorToast from "../ui/ErrorToast";
 
 const StudentLogin = () => {
     const navigate = useNavigate();
 
     let [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
 
     // Google Login
     const handleStudentLogin = async () => {
@@ -34,7 +38,7 @@ const StudentLogin = () => {
             });
 
         } catch (err) {
-            console.log("Login Error:", err);
+            setError(err.response?.data?.message || err.message || "Login failed. Please try again.");
         } finally {
             setLoading(false);
         }
@@ -43,7 +47,6 @@ const StudentLogin = () => {
     // Logout
     const handleStudentLogout = async () => {
         try {
-            // Backend cookie remove
             // api/auth/student/google-login
             await API.post("/auth/student/google-logout",
                 {},
@@ -64,14 +67,15 @@ const StudentLogin = () => {
     };
 
     return (
-        <div>
+        <div className="auth-option">
+            <ErrorToast message={error} onDismiss={() => setError("")} />
             <div className="auth-card student__auth">
                 <div className="auth-header">
                     <span className="badge student-badge">Student</span>
 
-                    <h2>Teaching Portal</h2>
+                    <h2>Learn new skills</h2>
 
-                    <p>Access your courses, assignments, and learning path.</p>
+                    <p>Access your courses and keep your learning momentum going.</p>
                 </div>
 
                 <button
@@ -82,7 +86,7 @@ const StudentLogin = () => {
                     <FcGoogle />
                     <span>
                         {loading
-                            ? "Loading..."
+                            ? <CircularLoader label="Signing in" />
                             : "Login as student with Google"}
                     </span>
                 </button>

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import API from '../../services/api'
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import CircularLoader from '../ui/CircularLoader';
+import ErrorToast from '../ui/ErrorToast';
 
 const InstructorLecture = () => {
 
@@ -38,7 +40,8 @@ const InstructorLecture = () => {
 
     return (
         <div>
-            {(load) ? <h1>Loading...</h1> : <h1>Student Lecture</h1>
+            <ErrorToast message={error} onDismiss={() => setError("")} />
+            {(load) ? <CircularLoader fullPage /> : <h1>Student Lecture</h1>
             }
 
             <div className="boughtCourses__cards">
