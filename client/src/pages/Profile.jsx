@@ -1,6 +1,7 @@
 import React from "react";
 import useUsers from "../hooks/useUsers";
 import ERROR404 from "../components/ERROR404";
+import CourseForm from "../components/courses/CourseForm";
 
 const Instructor = () => {
   const { user, person, loading, error } = useUsers();
@@ -17,7 +18,7 @@ const Instructor = () => {
     return <h2>{error}</h2>;
   }
 
-  const { name, email, role, profileImage } = person;
+  console.log(person.student.role)
 
   return (
     <div
@@ -40,7 +41,7 @@ const Instructor = () => {
       >
         <img
           src={
-            profileImage ||
+            person.student.profileImage ||
             "https://via.placeholder.com/120"
           }
           alt="Profile"
@@ -56,17 +57,22 @@ const Instructor = () => {
         <h2>{name || "No Name"}</h2>
 
         <p>
-          <strong>Email:</strong> {email}
+          <strong>Email:</strong> {person.student.email}
         </p>
 
         <p>
-          <strong>Role:</strong> {role}
+          <strong>Role:</strong> {person.student.role}
         </p>
 
         <p>
           <strong>User ID:</strong> {user?.id}
         </p>
       </div>
+
+      {
+        person.student.role == "instructor" && <CourseForm />
+      }
+
     </div>
   );
 };

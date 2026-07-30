@@ -1,15 +1,18 @@
 body {
   background: #303030;
-  color: #e2e1e1 !important;
+  /* color: #e2e1e1 !important; */
 }
 
 .courses-container {
   display: flex;
+  flex-wrap: wrap;
   margin: 10px;
 }
 
 .course-card-link {
   margin: 10px;
+
+  background-color: #0d0d0d;
 }
 
 .courses-wrapper {

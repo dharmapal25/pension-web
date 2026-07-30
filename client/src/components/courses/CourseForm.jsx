@@ -1,226 +1,371 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import axios from "axios";
+import "./CourseForm.css";
 
-const CourseForm = () => {
-  // 1. Course Form Main State
-  const [courseData, setCourseData] = useState({
-    title: '',
-    subtitle: '',
-    description: '',
-    instructor: '',
-    category: '',
-    tags: '', // Comma separated string
-    level: 'Beginner',
-    language: 'Hindi',
-    price: '',
-    discount: '',
-    rating: 0,
-    whatYouWillLearn: '', // Comma separated string
+// Schema ke hisaab se enums (backend ke exact same rakhe hain, warna validation error aayega)
+const CATEGORIES = [
+  "Web Development",
+  "Data Science",
+  "Programming",
+  "Design",
+  "Business",
+  "Marketing",
+  "App Development",
+];
+const LEVELS = ["beginner", "intermediate", "advanced"];
+const LANGUAGES = ["English", "Hindi", "Spanish", "French", "German"];
+
+// Ek empty lecture ka default shape - "Add Lecture" click hone par yehi object array me push hoga
+const emptyLecture = () => ({
+  title: "",
+  videoUrl: "",
+  duration: "",
+  isPreview: false,
+  resources: "", // input me comma-separated string lenge, submit ke time array me convert karenge
+});
+
+export default function CourseForm() {
+  const [formData, setFormData] = useState({
+    title: "",
+    subtitle: "",
+    description: "",
+    category: CATEGORIES[0],
+    tags: "", // comma separated -> submit par split hoga
+    level: "beginner",
+    language: "English",
+    thumbnail: "",
+    price: 0,
+    discount: 0,
+    whatYouWillLearn: "", // comma separated -> submit par split hoga
   });
 
-  // 2. Separate State for Thumbnail File & Preview
-  const [thumbnail, setThumbnail] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState('');
-
-  // 3. Dynamic Lectures List State
-  const [lectures, setLectures] = useState([
-    { title: '', videoUrl: '', duration: '', isPreview: false, resources: '' }
-  ]);
-
+  const [lectures, setLectures] = useState([emptyLecture()]);
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  // --- Handlers --- //
-
-  // Input change handler for regular course fields
+  // ---------- Course fields ke changes handle karna ----------
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setCourseData((prev) => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Thumbnail change & instant local preview handler
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setThumbnail(file);
-      setPreviewUrl(URL.createObjectURL(file)); // Local preview key
-    }
+  // ---------- Lecture ke andar ke fields change karna ----------
+  const handleLectureChange = (index, field, value) => {
+    setLectures((prev) =>
+      prev.map((lec, i) => (i === index ? { ...lec, [field]: value } : lec))
+    );
   };
 
-  // Lecture fields change handler
-  const handleLectureChange = (index, e) => {
-    const { name, value, type, checked } = e.target;
-    const updatedLectures = [...lectures];
-    updatedLectures[index][name] = type === 'checkbox' ? checked : value;
-    setLectures(updatedLectures);
-  };
-
-  // Add new lecture field
   const addLecture = () => {
-    setLectures((prev) => [
-      ...prev,
-      { title: '', videoUrl: '', duration: '', isPreview: false, resources: '' }
-    ]);
+    setLectures((prev) => [...prev, emptyLecture()]);
   };
 
-  // Remove lecture field
   const removeLecture = (index) => {
-    const updatedLectures = lectures.filter((_, i) => i !== index);
-    setLectures(updatedLectures);
+    setLectures((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Calculate totals automatically
-  const totalLecturesCount = lectures.length;
-  const calculatedTotalDuration = lectures.reduce((acc, curr) => acc + (Number(curr.duration) || 0), 0);
-
-  // --- Submit Handler --- //
+  // ---------- Submit ----------
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage({ type: "", text: "" });
 
-    if (!thumbnail) {
-      alert('Please select a course thumbnail!');
+    // Basic validation (schema ke required fields ke hisaab se)
+    if (!formData.title || !formData.subtitle || !formData.description || !formData.thumbnail) {
+      setMessage({ type: "error", text: "Sab required fields bharo (title, subtitle, description, thumbnail)." });
       return;
     }
+    if (lectures.length === 0) {
+      setMessage({ type: "error", text: "Kam se kam ek lecture add karo." });
+      return;
+    }
+    for (const lec of lectures) {
+      if (!lec.title || !lec.videoUrl || !lec.duration) {
+        setMessage({ type: "error", text: "Har lecture me title, videoUrl aur duration required hai." });
+        return;
+      }
+    }
 
-    setLoading(true);
+    // Payload ko schema ke exact shape me convert karna
+    const payload = {
+      title: formData.title,
+      subtitle: formData.subtitle,
+      description: formData.description,
+      category: formData.category,
+      tags: formData.tags
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+      level: formData.level,
+      language: formData.language,
+      thumbnail: formData.thumbnail,
+      price: Number(formData.price) || 0,
+      discount: Number(formData.discount) || 0,
+      whatYouWillLearn: formData.whatYouWillLearn
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
+      lectures: lectures.map((lec) => ({
+        title: lec.title,
+        videoUrl: lec.videoUrl,
+        duration: Number(lec.duration),
+        isPreview: lec.isPreview,
+        resources: lec.resources
+          .split(",")
+          .map((r) => r.trim())
+          .filter(Boolean),
+      })),
+    };
 
     try {
-      // Create FormData Object for multipart upload
-      const formData = new FormData();
-
-      // Append text inputs
-      Object.keys(courseData).forEach((key) => {
-        if (key === 'tags') {
-          // String ko array bana kar JSON.stringify karke bhejenge
-          const tagsArray = courseData.tags.split(',').map((tag) => tag.trim());
-          formData.append('tags', JSON.stringify(tagsArray));
-        } else if (key === 'whatYouWillLearn') {
-          const learnArray = courseData.whatYouWillLearn.split(',').map((item) => item.trim());
-          formData.append('whatYouWillLearn', JSON.stringify(learnArray));
-        } else {
-          formData.append(key, courseData[key]);
+      setLoading(true);
+      const token = localStorage.getItem("token"); // agar JWT auth use kar rahe ho
+      const { data } = await axios.post(
+        "http://localhost:3000/api/instructor/upload-course",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            ...(token && { Authorization: `Bearer ${token}` }),
+          },
         }
+      );
+      setMessage({ type: "success", text: "Course upload ho gaya!" });
+      console.log("Response:", data);
+
+      // Form reset
+      setFormData({
+        title: "",
+        subtitle: "",
+        description: "",
+        category: CATEGORIES[0],
+        tags: "",
+        level: "beginner",
+        language: "English",
+        thumbnail: "",
+        price: 0,
+        discount: 0,
+        whatYouWillLearn: "",
       });
-
-      // Append Thumbnail File (Crucial: key name matches multer 'thumbnail')
-      formData.append('thumbnail', thumbnail);
-
-      // Append Complex Arrays (Lectures array as JSON String)
-      formData.append('lectures', JSON.stringify(lectures));
-      formData.append('totalLectures', totalLecturesCount);
-      formData.append('totalDuration', calculatedTotalDuration);
-
-      // Send Request to Backend
-      const response = await fetch('http://localhost:3000/api/instructor/upload-course', {
-        method: 'POST',
-        body: formData, // Don't set Content-Type header; browser does it automatically with boundary
+      setLectures([emptyLecture()]);
+    } catch (err) {
+      console.error(err);
+      setMessage({
+        type: "error",
+        text: err.response?.data?.message || "Kuch galat ho gaya, backend check karo.",
       });
-
-      const data = await response.json();
-
-      if (data.success) {
-        alert('Course created successfully!');
-        // Reset form or redirect
-      } else {
-        alert(`Error: ${data.message}`);
-      }
-    } catch (error) {
-      console.error('Submit Error:', error);
-      alert('Failed to submit course');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ maxWidth: '800px', margin: '20px auto', padding: '20px', border: '1px solid #ddd', borderRadius: '8px' }}>
-      <h2>Create New Course</h2>
+    <div className="course-form-wrapper">
+      <div className="course-form-card">
+        <p className="course-form-eyebrow">Instructor Studio</p>
+        <h1 className="course-form-title">Upload New Course</h1>
 
-      <form onSubmit={handleSubmit}>
-        {/* --- Course Basic Info --- */}
-        <h3>Basic Details</h3>
-        <input type="text" name="title" placeholder="Course Title" value={courseData.title} onChange={handleChange} required style={inputStyle} />
-        <input type="text" name="subtitle" placeholder="Course Subtitle" value={courseData.subtitle} onChange={handleChange} style={inputStyle} />
-        <textarea name="description" placeholder="Description" value={courseData.description} onChange={handleChange} rows="4" style={inputStyle} />
-        
-        <input type="text" name="instructor" placeholder="Instructor Name / ID" value={courseData.instructor} onChange={handleChange} required style={inputStyle} />
-        
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <input type="text" name="category" placeholder="Category (e.g. Web Dev)" value={courseData.category} onChange={handleChange} style={inputStyle} />
-          <select name="level" value={courseData.level} onChange={handleChange} style={inputStyle}>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-          </select>
-          <input type="text" name="language" placeholder="Language" value={courseData.language} onChange={handleChange} style={inputStyle} />
-        </div>
-
-        {/* --- Pricing & Rating --- */}
-        <div style={{ display: 'flex', gap: '10px' }}>
-          <input type="number" name="price" placeholder="Price (₹)" value={courseData.price} onChange={handleChange} required style={inputStyle} />
-          <input type="number" name="discount" placeholder="Discount (%)" value={courseData.discount} onChange={handleChange} style={inputStyle} />
-          <input type="number" name="rating" placeholder="Rating (0-5)" step="0.1" value={courseData.rating} onChange={handleChange} style={inputStyle} />
-        </div>
-
-        {/* --- Tags & Learning Outcomes --- */}
-        <input type="text" name="tags" placeholder="Tags (comma separated e.g. react, node, mern)" value={courseData.tags} onChange={handleChange} style={inputStyle} />
-        <textarea name="whatYouWillLearn" placeholder="What You Will Learn (comma separated points)" value={courseData.whatYouWillLearn} onChange={handleChange} rows="3" style={inputStyle} />
-
-        {/* --- Thumbnail File Input --- */}
-        <h3>Course Thumbnail</h3>
-        <input type="file" accept="image/*" onChange={handleImageChange} required style={inputStyle} />
-        {previewUrl && (
-          <div style={{ margin: '10px 0' }}>
-            <img src={previewUrl} alt="Thumbnail Preview" style={{ width: '200px', height: '120px', objectFit: 'cover', borderRadius: '4px' }} />
-          </div>
+        {message.text && (
+          <div className={`course-form-banner ${message.type}`}>{message.text}</div>
         )}
 
-        {/* --- Dynamic Lectures List --- */}
-        <h3>Lectures ({totalLecturesCount} Total | {calculatedTotalDuration} mins)</h3>
-        {lectures.map((lecture, index) => (
-          <div key={index} style={{ border: '1px solid #ccc', padding: '10px', marginBottom: '10px', borderRadius: '6px', background: '#f9f9f9' }}>
-            <h4>Lecture #{index + 1}</h4>
-            <input type="text" name="title" placeholder="Lecture Title" value={lecture.title} onChange={(e) => handleLectureChange(index, e)} required style={inputStyle} />
-            <input type="text" name="videoUrl" placeholder="Video URL / Link" value={lecture.videoUrl} onChange={(e) => handleLectureChange(index, e)} required style={inputStyle} />
-            
-            <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-              <input type="number" name="duration" placeholder="Duration (mins)" value={lecture.duration} onChange={(e) => handleLectureChange(index, e)} style={inputStyle} />
-              <input type="text" name="resources" placeholder="Resource Link / PDF" value={lecture.resources} onChange={(e) => handleLectureChange(index, e)} style={inputStyle} />
-              <label style={{ display: 'flex', alignItems: 'center', gap: '5px', whitespace: 'nowrap' }}>
-                <input type="checkbox" name="isPreview" checked={lecture.isPreview} onChange={(e) => handleLectureChange(index, e)} />
-                Free Preview
-              </label>
+        <form onSubmit={handleSubmit} className="course-form">
+          {/* --- Basic Info --- */}
+          <div className="field-group">
+            <label className="field-label">Title *</label>
+            <input
+              type="text"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              maxLength={120}
+              placeholder="e.g. Complete MERN Stack Bootcamp"
+            />
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Subtitle *</label>
+            <input
+              type="text"
+              name="subtitle"
+              value={formData.subtitle}
+              onChange={handleChange}
+              maxLength={200}
+              placeholder="Short one-liner about the course"
+            />
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Description *</label>
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={4}
+              placeholder="Detailed course description"
+            />
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">Thumbnail URL *</label>
+            <input
+              type="text"
+              name="thumbnail"
+              value={formData.thumbnail}
+              onChange={handleChange}
+              placeholder="Cloudinary image URL"
+            />
+          </div>
+
+          {/* --- Category / Level / Language --- */}
+          <div className="field-row">
+            <div className="field-group">
+              <label className="field-label">Category</label>
+              <select name="category" value={formData.category} onChange={handleChange}>
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>{c}</option>
+                ))}
+              </select>
             </div>
 
-            {lectures.length > 1 && (
-              <button type="button" onClick={() => removeLecture(index)} style={{ background: '#ff4d4d', color: '#fff', border: 'none', padding: '5px 10px', cursor: 'pointer', borderRadius: '4px', marginTop: '5px' }}>
-                Remove Lecture
-              </button>
-            )}
+            <div className="field-group">
+              <label className="field-label">Level</label>
+              <select name="level" value={formData.level} onChange={handleChange}>
+                {LEVELS.map((l) => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="field-group">
+              <label className="field-label">Language</label>
+              <select name="language" value={formData.language} onChange={handleChange}>
+                {LANGUAGES.map((l) => (
+                  <option key={l} value={l}>{l}</option>
+                ))}
+              </select>
+            </div>
           </div>
-        ))}
 
-        <button type="button" onClick={addLecture} style={{ background: '#4CAF50', color: '#fff', border: 'none', padding: '8px 15px', cursor: 'pointer', borderRadius: '4px', marginBottom: '20px' }}>
-          + Add Lecture
-        </button>
+          {/* --- Price / Discount --- */}
+          <div className="field-row two">
+            <div className="field-group">
+              <label className="field-label">Price (₹)</label>
+              <input
+                type="number"
+                name="price"
+                value={formData.price}
+                onChange={handleChange}
+                min={0}
+              />
+            </div>
+            <div className="field-group">
+              <label className="field-label">Discount (%)</label>
+              <input
+                type="number"
+                name="discount"
+                value={formData.discount}
+                onChange={handleChange}
+                min={0}
+                max={100}
+              />
+            </div>
+          </div>
 
-        {/* --- Submit Button --- */}
-        <div>
-          <button type="submit" disabled={loading} style={{ width: '100%', background: '#007bff', color: '#fff', border: 'none', padding: '12px', fontSize: '16px', cursor: 'pointer', borderRadius: '4px' }}>
-            {loading ? 'Uploading Course...' : 'Submit Course'}
+          {/* --- Tags / What you'll learn --- */}
+          <div className="field-group">
+            <label className="field-label">Tags (comma separated)</label>
+            <input
+              type="text"
+              name="tags"
+              value={formData.tags}
+              onChange={handleChange}
+              placeholder="react, nodejs, mongodb"
+            />
+          </div>
+
+          <div className="field-group">
+            <label className="field-label">What you&apos;ll learn (comma separated)</label>
+            <input
+              type="text"
+              name="whatYouWillLearn"
+              value={formData.whatYouWillLearn}
+              onChange={handleChange}
+              placeholder="Build REST APIs, Deploy on Render, ..."
+            />
+          </div>
+
+          {/* --- Lectures section --- */}
+          <div>
+            <hr className="course-form-divider" />
+            <div className="lectures-header" style={{ marginTop: 20 }}>
+              <h2 className="lectures-heading">Lectures</h2>
+              <button type="button" onClick={addLecture} className="btn-add-lecture">
+                + Add Lecture
+              </button>
+            </div>
+
+            <div className="lectures-list">
+              {lectures.map((lec, index) => (
+                <div key={index} className="lecture-card">
+                  <div className="lecture-badge">{index + 1}</div>
+                  <div className="lecture-body">
+                    {lectures.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeLecture(index)}
+                        className="lecture-remove"
+                      >
+                        Remove
+                      </button>
+                    )}
+
+                    <div className="lecture-grid">
+                      <input
+                        type="text"
+                        placeholder="Lecture title *"
+                        value={lec.title}
+                        onChange={(e) => handleLectureChange(index, "title", e.target.value)}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Video URL *"
+                        value={lec.videoUrl}
+                        onChange={(e) => handleLectureChange(index, "videoUrl", e.target.value)}
+                      />
+                      <input
+                        type="number"
+                        placeholder="Duration (minutes) *"
+                        value={lec.duration}
+                        onChange={(e) => handleLectureChange(index, "duration", e.target.value)}
+                        min={1}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Resources (comma separated URLs)"
+                        value={lec.resources}
+                        onChange={(e) => handleLectureChange(index, "resources", e.target.value)}
+                      />
+                    </div>
+
+                    <label className="lecture-preview-toggle">
+                      <input
+                        type="checkbox"
+                        checked={lec.isPreview}
+                        onChange={(e) => handleLectureChange(index, "isPreview", e.target.checked)}
+                      />
+                      Free preview lecture
+                    </label>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <button type="submit" disabled={loading} className="btn-submit">
+            {loading ? "Uploading..." : "Upload Course"}
           </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
-};
-
-// Quick basic inline styling helper
-const inputStyle = {
-  width: '100%',
-  padding: '8px',
-  marginBottom: '10px',
-  borderRadius: '4px',
-  border: '1px solid #ccc',
-  boxSizing: 'border-box'
-};
-
-export default CourseForm;
+}

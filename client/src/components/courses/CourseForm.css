@@ -1,0 +1,305 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
+
+/* ---------- Design tokens ---------- */
+.course-form-wrapper {
+  --ink: #211f36;
+  --ink-soft: #5c5a78;
+  --paper: #f6f5fb;
+  --card: #ffffff;
+  --line: #e4e1f0;
+  --primary: #4338ca;
+  --primary-dark: #352da3;
+  --primary-tint: #eeecfc;
+  --amber: #e8a33d;
+  --amber-tint: #fbf0dd;
+  --success: #1f9d67;
+  --success-tint: #e6f6ee;
+  --error: #d64545;
+  --error-tint: #fdeaea;
+  --radius: 14px;
+
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  min-height: 100vh;
+  padding: 48px 20px;
+  box-sizing: border-box;
+}
+
+.course-form-wrapper *,
+.course-form-wrapper *::before,
+.course-form-wrapper *::after {
+  box-sizing: border-box;
+}
+
+/* ---------- Card shell ---------- */
+.course-form-card {
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 40px 40px 36px;
+  box-shadow: 0 1px 2px rgba(33, 31, 54, 0.04), 0 12px 32px -18px rgba(67, 56, 202, 0.25);
+}
+
+.course-form-eyebrow {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin: 0 0 6px;
+}
+
+.course-form-title {
+  font-family: "Sora", "Inter", sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 0 0 28px;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- Status banner ---------- */
+.course-form-banner {
+  margin-bottom: 20px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid transparent;
+}
+.course-form-banner.error {
+  background: var(--error-tint);
+  color: var(--error);
+  border-color: #f3c7c7;
+}
+.course-form-banner.success {
+  background: var(--success-tint);
+  color: var(--success);
+  border-color: #bfe6d3;
+}
+
+/* ---------- Form layout ---------- */
+.course-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.field-row.two {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 620px) {
+  .field-row,
+  .field-row.two {
+    grid-template-columns: 1fr;
+  }
+}
+
+.field-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+/* ---------- Inputs ---------- */
+.course-form input[type="text"],
+.course-form input[type="number"],
+.course-form select,
+.course-form textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 14.5px;
+  color: var(--ink);
+  background: #fdfdff;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  padding: 10px 13px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+}
+
+.course-form textarea {
+  resize: vertical;
+  min-height: 96px;
+  line-height: 1.5;
+}
+
+.course-form input::placeholder,
+.course-form textarea::placeholder {
+  color: #a6a3c0;
+}
+
+.course-form input:focus,
+.course-form select:focus,
+.course-form textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--primary-tint);
+}
+
+/* ---------- Section divider ---------- */
+.course-form-divider {
+  border: none;
+  border-top: 1px solid var(--line);
+  margin: 4px 0 0;
+}
+
+.lectures-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.lectures-heading {
+  font-family: "Sora", sans-serif;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+.btn-add-lecture {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--primary-tint);
+  color: var(--primary);
+  border: 1px solid #d6d1f5;
+  font-size: 13.5px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn-add-lecture:hover {
+  background: #e2ddfb;
+}
+.btn-add-lecture:active {
+  transform: scale(0.97);
+}
+
+/* ---------- Lecture cards (numbered, since order = playback sequence) ---------- */
+.lectures-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.lecture-card {
+  position: relative;
+  display: flex;
+  gap: 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 18px 18px 16px 16px;
+}
+
+.lecture-badge {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--amber-tint);
+  color: #9a6a12;
+  font-family: "Sora", sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.lecture-body {
+  flex: 1;
+  min-width: 0;
+}
+
+.lecture-remove {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--error);
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 4px;
+}
+.lecture-remove:hover {
+  text-decoration: underline;
+}
+
+.lecture-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-top: 2px;
+}
+
+@media (max-width: 560px) {
+  .lecture-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.lecture-preview-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--ink-soft);
+}
+
+.lecture-preview-toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--primary);
+}
+
+/* ---------- Submit button ---------- */
+.btn-submit {
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  font-family: "Sora", sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: none;
+  border-radius: 10px;
+  padding: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.btn-submit:hover:not(:disabled) {
+  background: var(--primary-dark);
+}
+.btn-submit:active:not(:disabled) {
+  transform: scale(0.99);
+}
+.btn-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

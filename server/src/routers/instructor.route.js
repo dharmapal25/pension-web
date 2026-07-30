@@ -1,5 +1,4 @@
 const express = require("express");
-const { LoginUser, LogoutUser, GetCurrentUser } = require("../controllers/auth.controller");
 const { uploadCourse } = require("../controllers/instructor.controller");
 const upload = require("../middlewares/multer");
 const instructorRoute = express.Router()
