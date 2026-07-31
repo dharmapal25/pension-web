@@ -62,6 +62,8 @@ const instructorLoginGoogle = async (req, res) => {
     // Cookie
     res.cookie("token", token, {
       httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -88,7 +90,10 @@ const instructorLoginGoogle = async (req, res) => {
 
 const instructorLogoutGoogle = (req, res) => {
   res.clearCookie("token", {
-    httpOnly: true,
+          httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.json({
@@ -168,6 +173,8 @@ const studentLoginGoogle = async (req, res) => {
 
     res.cookie("token", token, {
       httpOnly: true,
+      secure: true,
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -194,7 +201,10 @@ const studentLoginGoogle = async (req, res) => {
 
 const studentLogoutGoogle = (req, res) => {
   res.clearCookie("token", {
-    httpOnly: true,
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.json({

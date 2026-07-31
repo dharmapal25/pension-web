@@ -138,7 +138,7 @@ export default function CourseForm() {
       // an Authorization header. withCredentials makes the browser send
       // that cookie automatically with the request.
       const { data } = await axios.post(
-        "http://localhost:3000/api/instructor/upload-course",
+        "/instructor/upload-course",
         form,
         {
           withCredentials: true,
