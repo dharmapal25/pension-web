@@ -10,7 +10,7 @@ export default function ErrorToast({ message, onDismiss }) {
     const timeout = window.setTimeout(() => {
       setVisible(false);
       onDismiss?.();
-    }, 5000);
+    }, 50000);
     return () => window.clearTimeout(timeout);
   }, [message, onDismiss]);
 

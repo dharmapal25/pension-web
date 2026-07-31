@@ -44,6 +44,8 @@
   background: none;
   font-size: 22px;
   line-height: 1;
+    border: none;
+  outline: none;
 }
 
 .circular-loader {
