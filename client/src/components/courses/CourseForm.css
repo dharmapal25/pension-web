@@ -281,7 +281,9 @@
 /* ---------- Submit button ---------- */
 .btn-submit {
   width: 100%;
-  background: var(--primary);
+  /* background: var(--primary); */
+    background: linear-gradient(135deg, #1e6b4f, #059862);
+
   color: #fff;
   font-family: "Sora", sans-serif;
   font-size: 15px;

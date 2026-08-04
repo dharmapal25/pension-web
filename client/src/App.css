@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap'); */
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600&display=swap");
 
 :root {
     font-family: "DM Sans", Arial, sans-serif;
@@ -33,7 +34,7 @@
     height: 92px;
     margin-bottom: 18px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #6043e6 0%, #7f6bff 100%);
+    background: linear-gradient(135deg, #1e6b4f, #059862);
     color: #ffffff;
     font-size: 2rem;
     font-weight: 800;
@@ -81,7 +82,8 @@
 }
 
 .not-found-link.primary {
-    background: linear-gradient(135deg, #6043e6 0%, #7f6bff 100%);
+    background: linear-gradient(135deg, #1e6b4f, #059862);
+
     color: #ffffff;
     box-shadow: 0 10px 24px rgba(96, 67, 230, 0.26);
 }
@@ -150,6 +152,142 @@
 .course-detail-copy {
     max-width: 735px
 }
+
+.swiper {
+    width: 95%;
+}
+
+/* Container styling for Grid Layout */
+.home-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    padding: 20px;
+    background-color: #0f1217;
+    /* Dark background matching the image */
+}
+
+/* Card Outer Shell */
+.course-card {
+    background-color: #161a22;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #272d37;
+    display: flex;
+    flex-direction: column;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.course-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Image Wrapper */
+.card-image-wrapper {
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+}
+
+.card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Content Body */
+.card-content {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Title */
+.card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #e2e8f0;
+    line-height: 1.3;
+    margin: 0;
+}
+
+/* Instructor */
+.card-instructor {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin: 0;
+}
+
+/* Rating */
+.card-rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 4px;
+}
+
+.card-rating .star {
+    color: #f59e0b;
+    font-size: 0.9rem;
+}
+
+.rating-score {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #f1f5f9;
+}
+
+.rating-count {
+    font-size: 0.85rem;
+    color: #8b949e;
+}
+
+/* Meta Details */
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.82rem;
+    color: #8b949e;
+    margin-top: 2px;
+}
+
+.card-meta .dot {
+    font-size: 0.8rem;
+}
+
+/* Price & Discount Tag */
+.card-price-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.current-price {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.original-price {
+    font-size: 0.9rem;
+    color: #6e7681;
+    text-decoration: line-through;
+}
+
+.discount-tag {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #10b981;
+}
+
+
+
 
 .course-breadcrumb {
     margin: 0 0 15px;
@@ -292,7 +430,8 @@
     padding: 12px;
     border: 0;
     border-radius: 8px;
-    background: #6043e6;
+    /* background: #6043e6; */
+    background: linear-gradient(135deg, #1e6b4f, #059862);
     color: #fff;
     font-size: .88rem;
     font-weight: 800
@@ -521,10 +660,9 @@ button {
     border: 0;
     border-radius: 9px;
     color: #fff;
-    background: #6043e6;
+    background: linear-gradient(135deg, #1e6b4f, #059862);
     font-size: .88rem;
     font-weight: 700;
-    box-shadow: 0 8px 17px rgba(96, 67, 230, .18);
 }
 
 .nav-cta:disabled {
@@ -576,7 +714,8 @@ button {
 }
 
 .courses-hero h1 span {
-    color: #6043e6;
+    color: #059862;
+    /* background: linear-gradient(135deg, #1e6b4f, #059862); */
 }
 
 .hero-copy {
@@ -847,21 +986,24 @@ button {
     max-width: 1160px;
     min-height: 100vh;
     margin: 0 auto;
-    padding: 58px 28px 80px;
+    /* padding: 58px 28px 80px; */
 }
 
 .profile-card {
     overflow: hidden;
     position: relative;
-    border: 1px solid #e2e6f0;
-    border-radius: 20px;
+    /* border: 1px solid #e2e6f0; */
+    /* border-radius: 20px; */
     background: #fff;
-    box-shadow: 0 15px 36px rgba(42, 51, 83, .07);
+    /* box-shadow: 0 15px 36px rgba(42, 51, 83, .07); */
 }
 
 .profile-cover {
     height: 145px;
-    background: radial-gradient(circle at 20% 0, #ac9bff 0, transparent 38%), linear-gradient(120deg, #4130a2, #795ce8 55%, #a48fff);
+    /* background: radial-gradient(circle at 20% 0, #ac9bff 0, transparent 38%), linear-gradient(120deg, #4130a2, #795ce8 55%, #a48fff); */
+    /* background: radial-gradient(circle at 20% 0, #ac9bff 0, transparent 38%), linear-gradient(120deg, #cec489, #c1c5c0 55%, #a48fff); */
+    /* background: linear-gradient(to bottom right, #2c6831, #007d9c9a); */
+    background: linear-gradient(135deg, #1e6b4f, #059862);
 }
 
 .profile-back {
@@ -869,9 +1011,9 @@ button {
     top: 18px;
     right: 18px;
     padding: 8px 11px;
-    border: 1px solid rgba(255, 255, 255, .34);
+    border: 1px solid #ffffff57;
     border-radius: 8px;
-    background: rgba(255, 255, 255, .14);
+    background: #ffffff24;
     color: #fff;
     font-size: .75rem;
     font-weight: 800;
@@ -881,7 +1023,7 @@ button {
 }
 
 .profile-back:hover {
-    background: rgba(255, 255, 255, .28);
+    background: #ffffff47;
 }
 
 .profile-content {
@@ -1065,7 +1207,7 @@ button {
     padding: 10px;
     border: 0;
     border-radius: 8px;
-    background: #6043e6;
+    background: linear-gradient(135deg, #1e6b4f, #059862);
     color: #fff;
     font-size: .84rem;
     font-weight: 800;
@@ -1154,7 +1296,7 @@ button {
     padding: 15px;
     margin-bottom: 15px;
     border: none;
-    background: #6043e6;
+    background: linear-gradient(135deg, #1e6b4f, #059862);
     color: white;
     font-size: 17px;
 }
@@ -1176,10 +1318,8 @@ button {
 }
 
 .login-dashboard {
-    min-height: 100vh;
     display: grid;
     place-items: center;
-    padding: 28px;
     background: radial-gradient(circle at 12% 15%, #e6e1ff 0, transparent 30%), radial-gradient(circle at 90% 90%, #dcecff 0, transparent 29%), #f7f8fc;
 }
 
@@ -1188,8 +1328,7 @@ button {
     grid-template-columns: .9fr 1.1fr;
     width: min(1050px, 100%);
     overflow: hidden;
-    border: 1px solid rgba(218, 222, 236, .9);
-    border-radius: 25px;
+    border: 1px solid #dadeece6;
     background: #fff;
     box-shadow: 0 25px 70px rgba(56, 48, 104, .13);
 }
@@ -1201,7 +1340,7 @@ button {
     min-height: 590px;
     padding: clamp(34px, 5vw, 64px);
     color: #fff;
-    background: radial-gradient(circle at 10% 10%, rgba(174, 152, 255, .74), transparent 34%), linear-gradient(145deg, #30207b, #5c42ce 55%, #8067e7);
+    background: linear-gradient(135deg, #1e6b4f, #059862);
 }
 
 .login-topbar {

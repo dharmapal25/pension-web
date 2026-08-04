@@ -3,6 +3,7 @@ import axios from "axios";
 import "./CourseForm.css";
 import CircularLoader from "../ui/CircularLoader";
 import ErrorToast from "../ui/ErrorToast";
+import API from "../../services/api";
 
 // These must match the backend schema enums exactly, or validation will fail
 const CATEGORIES = [
@@ -134,16 +135,11 @@ export default function CourseForm() {
 
     try {
       setLoading(true);
-      // Backend reads the JWT from an httpOnly cookie, so we don't attach
-      // an Authorization header. withCredentials makes the browser send
-      // that cookie automatically with the request.
-      const { data } = await axios.post(
+      const { data } = await API.post(
         "/instructor/upload-course",
         form,
         {
           withCredentials: true,
-          // Do NOT set Content-Type manually for FormData,
-          // the browser sets it automatically with the correct boundary
         }
       );
       setMessage({ type: "success", text: "Course uploaded successfully!" });

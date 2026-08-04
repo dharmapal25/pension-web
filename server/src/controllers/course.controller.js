@@ -43,8 +43,25 @@ const getCourseById = async (req, res) => {
     }
 };
 
+const getTrendingCourses = async (req, res) => {
+    try {
+        const courses = await Course.find().limit(5);
+
+        res.status(200).json({
+            success: true,
+            courses
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+};
 
 module.exports = {
     getAllCourses,
-    getCourseById
+    getCourseById,
+    getTrendingCourses
 }

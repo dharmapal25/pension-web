@@ -3,6 +3,7 @@ import { HiSparkles } from 'react-icons/hi'
 import { Link } from 'react-router-dom'
 import InstructorLogin from '../components/auth/InstructorLogin'
 import StundentLogin from '../components/auth/StudentLogin'
+import logo from "../../public/logo.png"
 
 const Login = () => {
     return (
@@ -13,18 +14,18 @@ const Login = () => {
 
                     <div className="login-topbar">
                         <div className="login-brand">
-                            <span className="logo-mark">C</span>
-                            CourseBox
+                            <Link className="logo" to="/home">
+                                <img src={logo} height={"60px"} />
+                            </Link>
+
                         </div>
-                        <Link className="login-back" to="/home">
-                            ← Back to home
-                        </Link>
+
                     </div>
 
                     <p className="eyebrow">One place to grow</p>
 
                     <h1>Start building your
-                        <span>future.</span>
+                        <span> future.</span>
                     </h1>
 
                     <p>Choose how you want to use CourseBox today. You can learn new skills or share what you know.</p>
