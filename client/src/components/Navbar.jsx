@@ -3,6 +3,8 @@ import { HiMenuAlt3, HiX } from "react-icons/hi";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import useAuthUser from "../hooks/useAuthRole";
+import logo from "../../public/logo.png";
+
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -24,7 +26,7 @@ const Navbar = () => {
     <header className="site-header">
       <nav className="navbar" aria-label="Primary navigation">
         <Link className="logo" to="/home" onClick={closeMenu}>
-          <span className="logo-mark">C</span>CourseBox
+          <img src={logo} height={"60px"} />
         </Link>
         
         <button

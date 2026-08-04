@@ -13,6 +13,7 @@ import Login from './pages/Login.jsx'
 import Instructor from './pages/Profile.jsx'
 import StudyDashboard from './components/Purchase/StudyDashboard.jsx'
 import ERROR404 from './components/ERROR404.jsx'
+import CourseForm from './components/courses/CourseForm.jsx'
 
 
 const AllRoutes = createBrowserRouter([
@@ -31,7 +32,7 @@ const AllRoutes = createBrowserRouter([
     path: "/login",
     element: <Login />
   },
-  
+
   {
     path: "/courses",
     element: <Courses />
@@ -57,6 +58,7 @@ const AllRoutes = createBrowserRouter([
         <Instructor />
       </ProtectedRoute>
   },
+
   {
     path: "learn/:id",
     element:
@@ -64,10 +66,19 @@ const AllRoutes = createBrowserRouter([
         <StudyDashboard />
       </ProtectedRoute>
   },
+
+  {
+    path: "instructor/upload-course",
+    element:
+      <ProtectedRoute>
+        <CourseForm />
+      </ProtectedRoute>
+  },
+
   {
     path: "*",
     element:
-        <ERROR404 />
+      <ERROR404 />
   },
 
 

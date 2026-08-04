@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { HiAdjustments, HiSearch } from "react-icons/hi";
 import "../App.css";
 import CoursesCards from "../components/courses/CoursesCards";
@@ -12,14 +12,17 @@ const Courses = () => {
   const [query, setQuery] = useState("");
   const [level, setLevel] = useState("All levels");
 
-  const filteredCourses = useMemo(() => courses.filter((course) => {
-    const text = `${course.title} ${course.instructor?.name || ""} ${course.category || ""}`.toLowerCase();
-    return text.includes(query.toLowerCase()) && (level === "All levels" || course.level === level);
-  }), [courses, query, level]);
+
+
+  const filteredCourses = courses;
+  console.log("filteredCourses : ", filteredCourses)
 
   if (loading) return <CircularLoader fullPage />;
 
   return <>
+    <title>Course-Box</title>
+    
+
     <ErrorToast message={error} />
     <Navbar />
     <main className="courses-page">
@@ -68,7 +71,7 @@ const Courses = () => {
           <div className="empty-courses">No courses match your search. Try a different keyword.
           </div>
         }
-        
+
       </section>
     </main>
   </>;

@@ -71,13 +71,19 @@ const Instructor = () => {
           <div className="profile-details">
             <div><span>Account type</span><strong>{person.student.role}</strong></div>
             <div><span>User ID</span><strong title={user?.id}>{user?.id}</strong></div>
+            {
+              person.student.role == "instructor" &&
+              <Link to={"/instructor/upload-course"}>
+                <button className="upload-course"  >Upload course</button>
+              </Link>
+            }
           </div>
         </div>
       </section>
 
       <section className="profile-learning">
         <div className="profile-learning-header">
-          
+
           <div>
             <p className="eyebrow">Your space</p>
             <h2>{person.student.role === "student" ? "Your learning library" : "Your course library"}</h2>

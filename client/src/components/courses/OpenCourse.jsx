@@ -81,8 +81,10 @@ const OpenCourse = () => {
     }
   };
 
-  const learningPoints = course.whatYouWillLearn?.length ? course.whatYouWillLearn :
-    ["Build practical, portfolio-ready skills", "Learn with clear, structured lessons", "Study at your own pace"];
+  const learningPoints =
+    course.whatYouWillLearn?.length ?
+      course.whatYouWillLearn :
+      ["Build practical, portfolio-ready skills", "Learn with clear, structured lessons", "Study at your own pace"];
   const originalPrice = course.discount > 0 ? Math.round(course.price / (1 - course.discount / 100)) : null;
 
   return <>{(load || loading) ? <CircularLoader fullPage /> : <main className="course-detail-page">
@@ -131,11 +133,7 @@ const OpenCourse = () => {
           </div>
           <aside className="course-purchase-card">
             <div className="course-preview">
-              <img src={course.thumbnail} alt={course.title} />
-              <span>
-                <FaPlayCircle />
-                Preview this course
-              </span>
+              <img src={course.thumbnail} alt={course.title} loading="lazy" />
             </div>
 
             <div className="course-purchase-body">
